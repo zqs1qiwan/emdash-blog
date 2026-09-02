@@ -9,6 +9,7 @@ import Base from "../layouts/Base.astro";
 import PostCard from "../components/PostCard.astro";
 import { getReadingTime } from "../utils/reading-time";
 import { resolveBlogSiteIdentity } from "../utils/site-identity";
+import { getUiLocale, t as uiT, formatDate } from "../utils/i18n";
 
 // Limit to what we render (1 featured + 6 grid). The DB does the slicing
 // instead of fetching every post and discarding the tail in JS.
@@ -22,6 +23,8 @@ const [{ entries: posts, cacheHint }, settings] = await Promise.all([
 	getSiteSettings(),
 ]);
 const { siteTitle, siteTagline } = resolveBlogSiteIdentity(settings);
+const locale = getUiLocale(Astro.locals);
+const ui = uiT(locale);
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
@@ -62,25 +65,16 @@ const gridPostsWithTags = gridPosts.map((post) => ({
 	bylines: post.data.bylines ?? [],
 }));
 
-// Format date helper
-function formatDate(date: Date | null | undefined) {
-	if (!date) return null;
-	return date.toLocaleDateString("en-US", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	});
-}
 ---
 
 <Base title={siteTitle} description={siteTagline}>
 	{
 		posts.length === 0 ? (
 			<section class="empty-state">
-				<h2>No posts yet</h2>
-				<p>Create your first post in the admin panel.</p>
+				<h2>{ui.noPostsYet}</h2>
+				<p>{locale === "zh" ? "去后台写第一篇文章。" : "Create your first post in the admin panel."}</p>
 				<a href="/_emdash/admin/content/posts/new" class="btn">
-					Create a post
+					{ui.createFirst}
 				</a>
 			</section>
 		) : (
@@ -130,7 +124,7 @@ function formatDate(date: Date | null | undefined) {
 									)}
 									<span class="meta-dot" />
 									<span>
-										{getReadingTime(featuredPost.data.content)} min read
+										{ui.minRead(getReadingTime(featuredPost.data.content))}
 									</span>
 								</div>
 								<a
@@ -160,7 +154,7 @@ function formatDate(date: Date | null | undefined) {
 				{gridPostsWithTags.length > 0 && (
 					<section class="posts-section">
 						<header class="section-header">
-							<h2 class="section-title">Latest</h2>
+							<h2 class="section-title">{ui.latest}</h2>
 							{hasMorePosts && (
 								<a href="/posts" class="section-link">
 									View all

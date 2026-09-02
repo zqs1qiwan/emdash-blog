@@ -3,8 +3,11 @@ export const prerender = false;
 
 import { search } from "emdash";
 import Base from "../layouts/Base.astro";
+import { getUiLocale, t as uiT } from "../utils/i18n";
 
 const query = Astro.url.searchParams.get("q")?.trim() || "";
+const locale = getUiLocale(Astro.locals);
+const ui = uiT(locale);
 
 // Use the FTS-backed search() API instead of loading every post and
 // filtering in JS. FTS scales as the post count grows, returns ranked
@@ -16,30 +19,30 @@ const { items: results } = query
 ---
 
 <Base
-	title={query ? `Search: ${query}` : "Search"}
-	description="Search blog posts"
+	title={query ? `${ui.search}: ${query}` : ui.search}
+	description={ui.searchPosts}
 >
 	<section class="search-page">
-		<h1 class="search-title">Search</h1>
+		<h1 class="search-title">{ui.search}</h1>
 
 		<form method="get" action="/search" class="search-form">
 			<input
 				type="search"
 				name="q"
 				value={query}
-				placeholder="Search posts..."
+				placeholder={ui.searchPlaceholder}
 				class="search-input"
 				autofocus
 			/>
-			<button type="submit" class="search-button">Search</button>
+			<button type="submit" class="search-button">{ui.search}</button>
 		</form>
 
 		{
 			query && (
 				<p class="search-summary">
 					{results.length === 0
-						? `No results for "${query}"`
-						: `${results.length} result${results.length === 1 ? "" : "s"} for "${query}"`}
+						? ui.noResults(query)
+						: ui.resultsCount(results.length, query)}
 				</p>
 			)
 		}
@@ -66,7 +69,7 @@ const { items: results } = query
 			)
 		}
 
-		{!query && <p class="search-hint">Enter a search term to find posts.</p>}
+		{!query && <p class="search-hint">{ui.searchHint}</p>}
 	</section>
 </Base>
 

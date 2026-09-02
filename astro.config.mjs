@@ -7,6 +7,12 @@ import { defineConfig, fontProviders } from "astro/config";
 import emdash from "emdash/astro";
 
 export default defineConfig({
+	i18n: {
+		defaultLocale: "zh",
+		locales: ["zh", "en"],
+		routing: { prefixDefaultLocale: false },
+		fallback: { en: "zh" },
+	},
 	output: "server",
 	adapter: cloudflare(),
 	image: {

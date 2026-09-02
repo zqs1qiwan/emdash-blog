@@ -17,6 +17,7 @@ import Base from "../../layouts/Base.astro";
 import PostCard from "../../components/PostCard.astro";
 import { getReadingTime } from "../../utils/reading-time";
 import { resolveBlogSiteIdentity } from "../../utils/site-identity";
+import { getUiLocale, t as uiT, formatDate } from "../../utils/i18n";
 
 const slug = decodeSlug(Astro.params.slug);
 
@@ -94,12 +95,9 @@ const otherPostsWithTags = otherPosts.map((p) => ({
 	bylines: p.data.bylines ?? [],
 }));
 
-const publishDate =
-	post.data.publishedAt?.toLocaleDateString("en-US", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	}) ?? null;
+const locale = getUiLocale(Astro.locals);
+const ui = uiT(locale);
+const publishDate = formatDate(post.data.publishedAt, locale);
 ---
 
 <Base
@@ -133,7 +131,7 @@ const publishDate =
 						bylines.length > 0 && (
 							<div class="meta-block byline-block">
 								<span class="meta-label">
-									{bylines.length === 1 ? "Author" : "Authors"}
+									{ui.author(bylines.length)}
 								</span>
 								<div class="bylines">
 									{bylines.map((credit) => (
@@ -162,19 +160,19 @@ const publishDate =
 					{
 						publishDate && (
 							<div class="meta-block">
-								<span class="meta-label">Published</span>
+								<span class="meta-label">{ui.published}</span>
 								<time class="meta-value">{publishDate}</time>
 							</div>
 						)
 					}
 					<div class="meta-block">
-						<span class="meta-label">Reading time</span>
+						<span class="meta-label">{ui.readingTime}</span>
 						<span class="meta-value">{readingTime} min</span>
 					</div>
 					{
 						tags.length > 0 && (
 							<div class="meta-block">
-								<span class="meta-label">Tags</span>
+								<span class="meta-label">{ui.tags}</span>
 								<div class="meta-tags">
 									{tags.map((t) => (
 										<a href={`/tag/${t.slug}`} class="meta-tag">
@@ -215,7 +213,7 @@ const publishDate =
 								</>
 							)
 						}
-						<span>{readingTime} min read</span>
+						<span>{ui.minRead(readingTime)}</span>
 					</div>
 					<h1 class="article-title" {...post.edit.title}>{post.data.title}</h1>
 					{
@@ -239,7 +237,7 @@ const publishDate =
 			<aside class="article-sidebar">
 				<div class="sidebar-sticky">
 					<nav class="toc" aria-label="Table of contents">
-						<h4 class="toc-title">On this page</h4>
+						<h4 class="toc-title">{ui.onThisPage}</h4>
 						<div class="toc-content" id="toc-content">
 							<!-- Populated by JS -->
 						</div>
@@ -256,7 +254,7 @@ const publishDate =
 		otherPostsWithTags.length > 0 && (
 			<section class="more-posts">
 				<div class="more-inner">
-					<h2 class="more-title">Continue reading</h2>
+					<h2 class="more-title">{ui.continueReading}</h2>
 					<div class="more-grid">
 						{otherPostsWithTags.map(
 							({ post: p, tags: postTags, bylines: postBylines }) => (
