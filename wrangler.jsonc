@@ -1,0 +1,39 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "laobaiblog",
+  "main": "./src/worker.ts",
+  "account_id": "0900cf790220d543f4a1b7b8a0e13a0f",
+  "compatibility_date": "2026-02-24",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "laobaiblog-db",
+      "database_id": "eeb03e10-b3a5-4740-acb0-e4c48d198e1d"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "laobaiblog-media"
+    }
+  ],
+  "worker_loaders": [
+    {
+      "binding": "LOADER"
+    }
+  ],
+  "triggers": {
+    "crons": [
+      "* * * * *"
+    ]
+  },
+  "routes": [
+    {
+      "pattern": "blog.laobaitv.net/*",
+      "zone_name": "laobaitv.net"
+    }
+  ]
+}
