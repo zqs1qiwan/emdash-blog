@@ -25,7 +25,7 @@ if (!slug) {
 	return Astro.redirect("/404");
 }
 
-const { entry: post, cacheHint } = await getEmDashEntry("posts", slug);
+const { entry: post, cacheHint } = await getEmDashEntry("posts", slug, { locale: Astro.currentLocale });
 
 if (!post) {
 	return Astro.redirect("/404");
@@ -77,6 +77,7 @@ const tags = post.data.terms?.tag ?? [];
 
 // Fetch a few extra recent posts in case the current post is among them.
 const { entries: recentPosts } = await getEmDashCollection("posts", {
+		locale: Astro.currentLocale,
 	orderBy: { published_at: "desc" },
 	limit: 4,
 });
@@ -95,7 +96,7 @@ const otherPostsWithTags = otherPosts.map((p) => ({
 	bylines: p.data.bylines ?? [],
 }));
 
-const locale = getUiLocale(Astro.locals);
+const locale = (Astro.currentLocale as "zh" | "en" | undefined) ?? getUiLocale(Astro.locals);
 const ui = uiT(locale);
 const publishDate = formatDate(post.data.publishedAt, locale);
 ---

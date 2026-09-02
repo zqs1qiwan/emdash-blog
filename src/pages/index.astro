@@ -17,13 +17,14 @@ const POSTS_PER_PAGE = 7;
 
 const [{ entries: posts, cacheHint }, settings] = await Promise.all([
 	getEmDashCollection("posts", {
+		locale: Astro.currentLocale,
 		orderBy: { published_at: "desc" },
 		limit: POSTS_PER_PAGE + 1, // +1 to detect "view all" need
 	}),
 	getSiteSettings(),
 ]);
 const { siteTitle, siteTagline } = resolveBlogSiteIdentity(settings);
-const locale = getUiLocale(Astro.locals);
+const locale = (Astro.currentLocale as "zh" | "en" | undefined) ?? getUiLocale(Astro.locals);
 const ui = uiT(locale);
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);

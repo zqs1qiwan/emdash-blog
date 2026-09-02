@@ -12,7 +12,7 @@ import { getUiLocale, t as uiT, formatDate } from "../../utils/i18n";
 
 const slug = decodeSlug(Astro.params.slug);
 const term = slug ? await getTerm("category", slug) : null;
-const locale = getUiLocale(Astro.locals);
+const locale = (Astro.currentLocale as "zh" | "en" | undefined) ?? getUiLocale(Astro.locals);
 const ui = uiT(locale);
 
 if (!term) {
@@ -20,6 +20,7 @@ if (!term) {
 }
 
 const { entries: posts, cacheHint } = await getEmDashCollection("posts", {
+		locale: Astro.currentLocale,
 	where: { category: term.slug },
 	orderBy: { published_at: "desc" },
 });

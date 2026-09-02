@@ -10,7 +10,7 @@ export default defineConfig({
 	i18n: {
 		defaultLocale: "zh",
 		locales: ["zh", "en"],
-		routing: { prefixDefaultLocale: false },
+		routing: { prefixDefaultLocale: false, fallbackType: "rewrite" },
 		fallback: { en: "zh" },
 	},
 	output: "server",

@@ -25,7 +25,7 @@ const {
 	bylines,
 } = Astro.props;
 
-const locale = getUiLocale(Astro.locals);
+const locale = (Astro.currentLocale as "zh" | "en" | undefined) ?? getUiLocale(Astro.locals);
 const ui = uiT(locale);
 const formattedDate = formatDate(date, locale);
 ---

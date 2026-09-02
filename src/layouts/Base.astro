@@ -50,7 +50,7 @@ const fullTitle = title.includes(siteTitle) ? title : `${title} — ${siteTitle}
 const menu = await getMenu("primary");
 
 // 当前语言 (EmDash 通过 Astro.locals 注入)
-const currentLocale = getUiLocale(Astro.locals);
+const currentLocale = (Astro.currentLocale as "zh" | "en" | undefined) ?? getUiLocale(Astro.locals);
 const ui = uiT(currentLocale);
 const otherLocale = currentLocale === "zh" ? "en" : "zh";
 

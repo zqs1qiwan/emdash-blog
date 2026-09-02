@@ -7,6 +7,7 @@ import { getUiLocale, t as uiT, formatDate } from "../../utils/i18n";
 // Sort in the database rather than in JS — lets the DB use its index on
 // published_at and avoids a full-table scan on the client.
 const { entries: posts, cacheHint } = await getEmDashCollection("posts", {
+		locale: Astro.currentLocale,
 	orderBy: { published_at: "desc" },
 });
 
@@ -27,7 +28,7 @@ const postsWithTags = posts.map((post) => ({
 	bylines: post.data.bylines ?? [],
 }));
 
-const locale = getUiLocale(Astro.locals);
+const locale = (Astro.currentLocale as "zh" | "en" | undefined) ?? getUiLocale(Astro.locals);
 const ui = uiT(locale);
 ---
 

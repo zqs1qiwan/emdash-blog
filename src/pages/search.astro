@@ -6,7 +6,7 @@ import Base from "../layouts/Base.astro";
 import { getUiLocale, t as uiT } from "../utils/i18n";
 
 const query = Astro.url.searchParams.get("q")?.trim() || "";
-const locale = getUiLocale(Astro.locals);
+const locale = (Astro.currentLocale as "zh" | "en" | undefined) ?? getUiLocale(Astro.locals);
 const ui = uiT(locale);
 
 // Use the FTS-backed search() API instead of loading every post and
