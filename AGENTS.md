@@ -1,107 +1,69 @@
-This is an EmDash site -- a CMS built on Astro with a full admin UI.
+# AGENTS.md
 
-## Commands
+给 AI agent（Claude Code / Codex / MCP 等）操作这个仓库的工作说明。
+
+## 项目概要
+
+EmDash CMS 博客，Astro 6 SSR + Cloudflare Workers（D1/R2/KV/Worker Loader）。中文为主语言（无 URL 前缀），英文翻译带 `/en/` 前缀。内容存 D1，**写文章不需要部署**；只有改代码才需要。
+
+## 常用命令
 
 ```bash
-pnpm dev              # Start the Astro dev server
-npx emdash types      # Regenerate TypeScript types from a running site
+npm install --legacy-peer-deps   # 安装（有 peer 冲突，必须 legacy）
+npx astro dev                    # 本地开发 (localhost:4321)
+npx astro build                  # 构建 → dist/
+npx wrangler deploy              # 部署（会优先读 dist/server/wrangler.json）
+npx wrangler tail                # 看线上实时日志（调试 500 必备）
+npx wrangler d1 execute <db> --remote --command "SQL"   # 查线上数据
 ```
 
-The admin UI is at `http://localhost:4321/_emdash/admin`.
+## 关键约定
 
-## Key Files
+- **部署链路陷阱**：`astro build` 把资源配置（worker 名/D1/R2 绑定）烘焙进 `dist/server/wrangler.json`，`wrangler deploy` 优先读它而非根目录 `wrangler.jsonc`。改过任何资源名/配置后必须重新 build 再 deploy。
+- **i18n**：全站 UI 文案集中在 `src/utils/i18n.ts`（`t(locale)` 返回字符串字典，`formatDate(date, locale)`）。新增页面禁止硬编码英文文案，一律走 `getUiLocale(Astro.locals)` + `ui.xxx`。
+- **LiveSearch**：加载/无结果文案用 slot 覆盖（`<fragment slot="loading">`），组件默认是英文。
+- **内容查询**：用 `getEmDashCollection`（支持 orderBy/where/limit），标签批量查询用 `getTermsForEntries`（避免 N+1）。
+- ** Portable Text**：内容是结构化 JSON（block/code/table 类型），不是 HTML。渲染用 `<PortableText value={...} />`。
+- **样式**：CSS 设计令牌在 `src/styles/tokens.css`（颜色/字号/间距变量），改主题色改那里，别在组件里写死色值。
 
-| File                     | Purpose                                                                            |
-| ------------------------ | ---------------------------------------------------------------------------------- |
-| `astro.config.mjs`       | Astro config with `emdash()` integration, database, and storage                    |
-| `src/live.config.ts`     | EmDash loader registration (boilerplate -- don't modify)                           |
-| `seed/seed.json`         | Schema definition + demo content (collections, fields, taxonomies, menus, widgets) |
-| `emdash-env.d.ts`        | Generated types for collections (auto-regenerated on dev server start)             |
-| `src/layouts/Base.astro` | Base layout with EmDash wiring (menus, search, page contributions)                 |
-| `src/pages/`             | Astro pages -- all server-rendered                                                 |
+## 代码结构
 
-## Skills
+```
+src/
+├── layouts/Base.astro          # 全局布局：导航、页脚、语言切换按钮、主题切换
+├── pages/
+│   ├── index.astro             # 首页（featured + 6 宫格）
+│   ├── posts/[slug].astro      # 文章详情（TOC/作者/相关文章）
+│   ├── pages/[slug].astro      # 独立页面（about 等）
+│   ├── search.astro            # 搜索页（FTS5）
+│   ├── category/[slug].astro   # 分类归档
+│   ├── tag/[slug].astro        # 标签归档
+│   ├── rss.xml.ts              # RSS（language=zh）
+│   └── 404.astro
+├── components/PostCard.astro
+└── utils/{i18n,reading-time,site-identity}.ts
+wrangler.jsonc                  # 部署配置（开源版，无账号信息）
+astro.config.mjs                # i18n/集成/插件配置
+seed/seed.json                  # 初始 schema + 示例内容
+```
 
-Agent skills are in `.agents/skills/`. Load them when working on specific tasks:
+## 已知问题与修复记录
 
-- **building-emdash-site** -- Querying content, rendering Portable Text, schema design, seed files, site features (menus, widgets, search, SEO, comments, bylines). Start here.
-- **creating-plugins** -- Building EmDash plugins with hooks, storage, admin UI, API routes, and Portable Text block types.
-- **emdash-cli** -- CLI commands for content management, seeding, type generation, and visual editing flow.
+- `getTranslations()` 返回 `{ translationGroup, translations: [...] }` 对象，不是数组——直接 `.find()` 会 500
+- EmDash admin 有前端缓存，改后端后看不到新功能先硬刷新
+- D1 里内容表有 `ec_` 前缀（ec_posts/ec_pages），options 表存 `site:title` 等 K-V（JSON 字符串值）
+- 菜单/菜单项也是 per-locale 的（`_emdash_menus`/`_emdash_menu_items` 表），i18n 改 locale 后要同步菜单
 
-## Documentation
+## 数据库操作注意
 
-The EmDash docs are available as an MCP server at `https://docs.emdashcms.com/mcp`. When you need to verify an API, hook, config option, field type, or pattern, call `search_docs` against the live documentation rather than relying on training-data recall. The docs reflect current behaviour; assumptions may not.
+直接改 D1 数据（如修 locale）用：
+```bash
+npx wrangler d1 execute laobaiblog-db --remote --command "UPDATE ..."
+```
+改完内容相关的数据后，站点有 object cache（KV），如果前台没生效，等 cache TTL 过期或清 KV 中 settings/collection 相关 key。
 
-This template ships with `.mcp.json`, `.cursor/mcp.json`, and `.vscode/mcp.json` so Claude Code, Cursor, and VS Code auto-discover the docs server. Other tools (OpenCode, Windsurf, etc.) need a manual one-time setup -- see [docs.emdashcms.com/docs-mcp](https://docs.emdashcms.com/docs-mcp).
+## 不要做
 
-## Rules
-
-- All content pages must be server-rendered (`output: "server"`). No `getStaticPaths()` for CMS content.
-- Image fields are objects (`{ src, alt }`), not strings. Use `<Image image={...} />` from `"emdash/ui"`.
-- `entry.id` is the slug (for URLs). `entry.data.id` is the database ULID (for API calls like `getEntryTerms`).
-- Always call `Astro.cache.set(cacheHint)` on pages that query content.
-- Taxonomy names in queries must match the seed's `"name"` field exactly (e.g., `"category"` not `"categories"`).
-
-## This Template
-
-A blog with posts, pages, categories, tags, full-text search, and RSS. Designed for personal writing, technical writing, indie newsletters, and anything where the writing is the product. Editorial-tech aesthetic: confident sans-serif, restrained accent, real article structure with bylines and reading time.
-
-## Pages
-
-| Page        | Path               | What it shows                                                                                          |
-| ----------- | ------------------ | ------------------------------------------------------------------------------------------------------ |
-| Home        | `/`                | Featured post hero (large image + excerpt), latest posts grid                                          |
-| All posts   | `/posts`           | Article count, full post list with excerpts and tag chips                                              |
-| Post detail | `/posts/[slug]`    | Featured image, title, body, left meta column (authors + date), right TOC + search + categories gutter |
-| Search      | `/search`          | Full-text search UI                                                                                    |
-| Page        | `/pages/[slug]`    | Static page content (Portable Text)                                                                    |
-| Category    | `/category/[slug]` | Posts filtered by category                                                                             |
-| Tag         | `/tag/[slug]`      | Posts filtered by tag                                                                                  |
-| RSS         | `/rss.xml`         | Generated feed                                                                                         |
-
-## Schema
-
-- `posts` collection: `title`, `featured_image`, `content` (Portable Text), `excerpt` (text).
-- `pages` collection: `title`, `content` (Portable Text). Used for `/about` etc.
-- Taxonomies: `category`, `tag`.
-- Single `primary` menu (Home, About, Posts by default).
-
-Site settings have `title` and `tagline` -- both render in the header / footer.
-
-## Visual character
-
-Single typeface: **Inter** on `--font-body`, used for everything including headings (`--font-heading` defaults to the body face; tighter letter-spacing on h1/h2). **JetBrains Mono** on `--font-mono` for inline code and code blocks. Body and headings share the same family; weight and size carry the hierarchy (`--font-weight-heading` 600, `--font-weight-display` 700 for h1/page titles).
-
-The brand colour is `#0066cc` (`--color-brand`) -- used for links, the post-card title hover, and the search input focus ring. There's also a secondary text colour (`--color-text-secondary`) and a `--color-muted` for meta info. Don't add a second accent.
-
-The article layout is the standout feature: a three-column reading view with a left meta column (author bylines, date), centred 680px body column, and a right gutter for search, table of contents, and categories. Don't flatten that into one column on desktop -- the layout signals "this is something to read".
-
-## Customisation
-
-Design tokens live in `src/styles/tokens.css` with their default values. To restyle the site, override tokens in `src/styles/theme.css` -- declarations there are unlayered, so they always beat the `@layer base` defaults. Don't edit `tokens.css` or `Base.astro` for visual changes.
-
-Colours are defined with `light-dark(<light>, <dark>)`, so each token carries both modes. Overriding with a plain colour changes light and dark at once; use `light-dark()` in the override to keep them distinct. There is no separate dark palette to maintain.
-
-Webfonts are configured in `astro.config.mjs` under `fonts:`. To swap the body face, change the `name:` for the entry bound to `cssVariable: "--font-body"`. Good alternatives: Geist, IBM Plex Sans, Söhne (if you have a licence), Public Sans. If you want a serif-bodied blog, swap to a humanist serif like Source Serif, Crimson Pro, or Lora -- but then also raise `--font-size-base` to `1.0625rem` for readability. To give headings their own face (or use a system font) without touching the font pipeline, override `--font-heading` or `--font-body` in `theme.css`.
-
-CSS variables worth knowing (see `tokens.css` for the full list):
-
-- `--color-brand`, `--color-brand-hover`, `--color-on-brand`, `--color-brand-ring`
-- `--color-bg`, `--color-bg-subtle`, `--color-surface`, `--color-text`, `--color-text-secondary`, `--color-muted`, `--color-border`, `--color-border-subtle`
-- `--font-body`, `--font-heading`, `--font-mono`
-- `--font-weight-heading` (600) / `--font-weight-display` (700) -- heading weights; lower them if you switch to a serif
-- `--tracking-tight` / `--tracking-snug` / `--tracking-wide` / `--tracking-wider` -- letter-spacing tokens used across headings and meta labels
-- `--content-width` (680px) -- article body column
-- `--wide-width` (1200px) -- max container
-- `--gutter-width` (200px) -- right sidebar (TOC) on article pages
-- `--meta-col-width` (180px) -- left meta column on article pages
-- `--avatar-size-{xs,sm,md,lg}` -- byline avatar sizes at different scales
-
-## What not to do
-
-- Don't add a second accent colour or coloured section backgrounds. The page should be black, white, and one blue.
-- Don't replace Inter with a display sans (Bebas, Anton, etc.). Headings rely on weight contrast, not novelty faces.
-- Don't collapse the article gutter on desktop -- it's part of the reading experience.
-- Don't use stock blog copy ("Welcome to my blog", "Stay tuned for more"). Write a real tagline that says what this blog is about.
-- Don't seed the home page with three identical placeholder posts. If you only have one real post, show one real post.
-- Don't enable comments without a plan to moderate them. The template doesn't ship a comments system by default for a reason.
+- 不要在开源文件里提交真实账号 ID/域名（account_id、routes.zone_name 等留在本地配置）
+- 不要直接改 `dist/` 下的产物
+- 不要在免费计划账号上保留 `worker_loaders`（Dynamic Workers 付费功能，deploy 会失败）
