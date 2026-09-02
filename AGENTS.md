@@ -58,7 +58,7 @@ seed/seed.json                  # 初始 schema + 示例内容
 
 直接改 D1 数据（如修 locale）用：
 ```bash
-npx wrangler d1 execute laobaiblog-db --remote --command "UPDATE ..."
+npx wrangler d1 execute my-emdash-blog-db --remote --command "UPDATE ..."
 ```
 改完内容相关的数据后，站点有 object cache（KV），如果前台没生效，等 cache TTL 过期或清 KV 中 settings/collection 相关 key。
 
