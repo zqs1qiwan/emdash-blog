@@ -2,12 +2,11 @@
 import { getEmDashCollection, getTermsForEntries } from "emdash";
 import Base from "../../layouts/Base.astro";
 import { getReadingTime } from "../../utils/reading-time";
-import { getUiLocale, t as uiT, formatDate } from "../../utils/i18n";
+import { ui, formatDate } from "../../utils/i18n";
 
 // Sort in the database rather than in JS — lets the DB use its index on
 // published_at and avoids a full-table scan on the client.
 const { entries: posts, cacheHint } = await getEmDashCollection("posts", {
-		locale: Astro.currentLocale,
 	orderBy: { published_at: "desc" },
 });
 
@@ -28,11 +27,9 @@ const postsWithTags = posts.map((post) => ({
 	bylines: post.data.bylines ?? [],
 }));
 
-const locale = (Astro.currentLocale as "zh" | "en" | undefined) ?? getUiLocale(Astro.locals);
-const ui = uiT(locale);
 ---
 
-<Base title={locale === "zh" ? "全部文章" : "All Posts"} description={locale === "zh" ? "浏览全部博客文章" : "Browse all blog posts"}>
+<Base title={ui.allPosts} description="浏览全部博客文章">
 	<div class="posts-page">
 		<header class="page-header">
 			<h1 class="page-title">{ui.allPosts}</h1>
@@ -78,7 +75,7 @@ const ui = uiT(locale);
 										</>
 									)}
 									{post.data.publishedAt && (
-										<time>{formatDate(post.data.publishedAt, locale)}</time>
+										<time>{formatDate(post.data.publishedAt)}</time>
 									)}
 									{post.data.publishedAt && <span class="meta-dot" />}
 									<span>{ui.minRead(getReadingTime(post.data.content))}</span>

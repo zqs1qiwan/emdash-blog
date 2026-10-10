@@ -1,5 +1,5 @@
 ---
-import { getMenu, getTranslations, getEmDashCollection, getSiteSettings } from "emdash";
+import { getMenu, getEmDashCollection, getSiteSettings } from "emdash";
 import {
 	WidgetArea,
 	EmDashHead,
@@ -10,7 +10,7 @@ import { createPublicPageContext } from "emdash/page";
 import LiveSearch from "emdash/ui/search";
 import { Font } from "astro:assets";
 import { resolveBlogSiteIdentity } from "../utils/site-identity";
-import { getUiLocale, t as uiT, formatDate as fmtDate } from "../utils/i18n";
+import { ui, formatDate as fmtDate } from "../utils/i18n";
 import "../styles/tokens.css";
 import "../styles/theme.css";
 
@@ -49,22 +49,6 @@ const fullTitle = title.includes(siteTitle) ? title : `${title} — ${siteTitle}
 // Fetch primary menu defined in seed
 const menu = await getMenu("primary");
 
-// 当前语言 (EmDash 通过 Astro.locals 注入)
-const currentLocale = (Astro.currentLocale as "zh" | "en" | undefined) ?? getUiLocale(Astro.locals);
-const ui = uiT(currentLocale);
-const otherLocale = currentLocale === "zh" ? "en" : "zh";
-
-// 尝试取当前内容的另一语言版本
-const translations = content ? await getTranslations(content.collection, content.id) : null;
-let otherUrl: string | null = null;
-if (translations?.translations?.length) {
-	const other = translations.translations.find((t: any) => t.locale === otherLocale && t.status === "published");
-	if (other) {
-		otherUrl = otherLocale === "zh" ? `/${other.slug}` : `/${otherLocale}/${other.slug}`;
-	}
-}
-// 无翻译时兜底到该语言首页
-const fallbackOtherUrl = otherLocale === "zh" ? "/" : `/${otherLocale}/`;
 
 // Optional "social" menu. If a site defines a `social` menu in its seed,
 // it'll render in the footer's "Connect" column. Otherwise that column
@@ -96,7 +80,7 @@ const isLoggedIn = !!Astro.locals.user;
 ---
 
 <!doctype html>
-<html lang={currentLocale}>
+<html lang="zh-CN">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -136,8 +120,8 @@ const isLoggedIn = !!Astro.locals.user;
 						resultClass="site-search-result"
 						collections={["posts", "pages"]}
 					>
-						<fragment slot="loading">{currentLocale === "zh" ? "搜索中..." : "Searching..."}</fragment>
-						<fragment slot="no-results">{currentLocale === "zh" ? "没有找到相关内容" : "No results found"}</fragment>
+						<fragment slot="loading">{ui.searching}</fragment>
+						<fragment slot="no-results">{ui.searchNoResults}</fragment>
 					</LiveSearch>
 					<div class="nav-links">
 						{
@@ -156,9 +140,6 @@ const isLoggedIn = !!Astro.locals.user;
 						</a>
 					)
 				}
-				<a href={otherUrl ?? fallbackOtherUrl} class="nav-lang" aria-label="Switch language">
-					{currentLocale === "zh" ? "EN" : "中"}
-				</a>
 			</nav>
 		</header>
 
@@ -179,9 +160,9 @@ const isLoggedIn = !!Astro.locals.user;
 						<p class="footer-tagline">{siteTagline}</p>
 					</div>
 					<div class="footer-nav">
-						<h4 class="footer-heading">{ui.allPosts === "全部文章" ? "导航" : "Navigate"}</h4>
+						<h4 class="footer-heading">导航</h4>
 						<ul class="footer-links">
-							<li><a href="/">{ui.allPosts === "全部文章" ? "首页" : "Home"}</a></li>
+							<li><a href="/">{ui.home}</a></li>
 							<li><a href="/posts">{ui.allPosts}</a></li>
 							{
 								pages.slice(0, 3).map((page) => (
@@ -195,7 +176,7 @@ const isLoggedIn = !!Astro.locals.user;
 						</ul>
 					</div>
 					<div class="footer-nav">
-						<h4 class="footer-heading">{ui.allPosts === "全部文章" ? "链接" : "Connect"}</h4>
+						<h4 class="footer-heading">链接</h4>
 						<ul class="footer-links">
 							{
 								socialMenu?.items.map((item) => (
@@ -542,30 +523,6 @@ const isLoggedIn = !!Astro.locals.user;
 				color: var(--color-text);
 			}
 
-			/* 语言切换按钮 */
-			.nav-lang {
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
-				min-width: 2.25rem;
-				height: 2rem;
-				padding: 0 0.6rem;
-				font-size: var(--font-size-xs);
-				font-weight: 600;
-				letter-spacing: var(--tracking-wide);
-				color: var(--color-text-secondary);
-				border: 1px solid var(--color-border);
-				border-radius: 999px;
-				text-decoration: none;
-				transition: color var(--transition-fast), border-color var(--transition-fast);
-				flex-shrink: 0;
-			}
-
-			.nav-lang:hover {
-				color: var(--color-text);
-				border-color: var(--color-text-secondary);
-			}
-
 			/* Search styling */
 			.site-search {
 				position: relative;
@@ -889,12 +846,6 @@ const isLoggedIn = !!Astro.locals.user;
 					justify-content: flex-start;
 				}
 
-				.nav-lang {
-					grid-column: 2;
-					grid-row: 1;
-					justify-self: end;
-					margin-inline-end: 0.5rem;
-				}
 
 				.nav-admin {
 					grid-column: 2;

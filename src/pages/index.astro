@@ -9,7 +9,7 @@ import Base from "../layouts/Base.astro";
 import PostCard from "../components/PostCard.astro";
 import { getReadingTime } from "../utils/reading-time";
 import { resolveBlogSiteIdentity } from "../utils/site-identity";
-import { getUiLocale, t as uiT, formatDate } from "../utils/i18n";
+import { ui, formatDate } from "../utils/i18n";
 
 // Limit to what we render (1 featured + 6 grid). The DB does the slicing
 // instead of fetching every post and discarding the tail in JS.
@@ -17,15 +17,12 @@ const POSTS_PER_PAGE = 7;
 
 const [{ entries: posts, cacheHint }, settings] = await Promise.all([
 	getEmDashCollection("posts", {
-		locale: Astro.currentLocale,
 		orderBy: { published_at: "desc" },
 		limit: POSTS_PER_PAGE + 1, // +1 to detect "view all" need
 	}),
 	getSiteSettings(),
 ]);
 const { siteTitle, siteTagline } = resolveBlogSiteIdentity(settings);
-const locale = (Astro.currentLocale as "zh" | "en" | undefined) ?? getUiLocale(Astro.locals);
-const ui = uiT(locale);
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
@@ -73,7 +70,7 @@ const gridPostsWithTags = gridPosts.map((post) => ({
 		posts.length === 0 ? (
 			<section class="empty-state">
 				<h2>{ui.noPostsYet}</h2>
-				<p>{locale === "zh" ? "去后台写第一篇文章。" : "Create your first post in the admin panel."}</p>
+				<p>去后台写第一篇文章。</p>
 				<a href="/_emdash/admin/content/posts/new" class="btn">
 					{ui.createFirst}
 				</a>
