@@ -9,8 +9,7 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "laobaiblog-db",
-      "database_id": "eeb03e10-b3a5-4740-acb0-e4c48d198e1d"
+      "database_name": "laobaiblog-db"
     }
   ],
   "r2_buckets": [
