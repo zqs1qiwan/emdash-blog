@@ -107,7 +107,10 @@ const isLoggedIn = !!Astro.locals.user;
 			<nav class="nav">
 				<a href="/" class="site-title">
 					{siteLogo
-						? <img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="site-logo-img" />
+						? <>
+							<img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="site-logo-img" />
+							<span class="site-title-text">{siteTitle}</span>
+						</>
 						: siteTitle
 					}
 				</a>
@@ -153,7 +156,10 @@ const isLoggedIn = !!Astro.locals.user;
 					<div class="footer-brand">
 						<a href="/" class="footer-logo">
 							{siteLogo
-								? <img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="footer-logo-img" />
+								? <>
+									<img src={siteLogo.url} alt={siteLogo.alt || siteTitle} class="footer-logo-img" />
+									<span>{siteTitle}</span>
+								</>
 								: siteTitle
 							}
 						</a>
@@ -482,6 +488,12 @@ const isLoggedIn = !!Astro.locals.user;
 				color: var(--color-brand);
 			}
 
+			.site-title {
+				display: inline-flex;
+				align-items: center;
+				gap: var(--spacing-3);
+			}
+
 			.site-logo-img {
 				height: 48px;
 				width: auto;
@@ -661,9 +673,16 @@ const isLoggedIn = !!Astro.locals.user;
 				letter-spacing: var(--tracking-snug);
 			}
 
+			.footer-logo {
+				display: inline-flex;
+				align-items: center;
+				gap: var(--spacing-2);
+			}
+
 			.footer-logo-img {
 				height: 24px;
 				width: auto;
+				display: inline-block;
 			}
 
 			.footer-tagline {
