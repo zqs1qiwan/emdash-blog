@@ -134,9 +134,9 @@ const publishDate = formatDate(post.data.publishedAt);
 								<div class="bylines">
 									{bylines.map((credit) => (
 										<div class="byline">
-											{credit.byline.avatarMediaId && (
+											{credit.byline.avatarStorageKey && (
 												<img
-													src={`/_emdash/api/media/file/${credit.byline.avatarMediaId}`}
+													src={`/_emdash/api/media/file/${credit.byline.avatarStorageKey}`}
 													alt={credit.byline.displayName}
 													class="byline-avatar"
 												/>
