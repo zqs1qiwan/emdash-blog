@@ -6,25 +6,25 @@
   @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Regular.otf'); font-weight:400; }
   @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Bold.otf'); font-weight:700; }
   * { margin:0; padding:0; box-sizing:border-box; }
-  html,body { width:1200px; height:640px; overflow:hidden; background:#0b0c0e; color:#f2f2f0;
+  html,body { width:1200px; min-height:200px; overflow:visible; background:#0b0c0e; color:#f2f2f0;
     font-family:'SC','DejaVu Sans',sans-serif; -webkit-font-smoothing:antialiased; }
-  .f { position:absolute; inset:0; padding:60px 72px 44px; display:flex; flex-direction:column; }
+  .f { position:relative; min-height:200px; padding:34px 40px 20px; display:flex; flex-direction:column; }
   .meta { display:flex; justify-content:space-between;
     font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; letter-spacing:.14em; color:#5b6269; }
-  h1 { margin-top:34px; font-size:40px; font-weight:700; line-height:1.24; letter-spacing:-.015em; max-width:920px; }
+  h1 { margin-top:16px; font-size:43px; font-weight:700; line-height:1.24; letter-spacing:-.015em; max-width:920px; }
   h1 b { color:#ff5a1f; font-weight:700; }
-  .chart { margin-top:54px; }
-  .row { display:grid; grid-template-columns:190px 1fr 214px; align-items:center; margin-bottom:30px; }
+  .chart { margin-top:22px; }
+  .row { display:grid; grid-template-columns:190px 1fr 214px; align-items:center; margin-bottom:16px; }
   .k { font-size:15px; color:#c9ced3; }
   .k i { display:block; margin-top:5px; font-style:normal;
     font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; color:#5b6269; letter-spacing:.02em; }
-  .bar { position:relative; height:18px; }
+  .bar { position:relative; height:26px; }
   .bar u { position:absolute; left:0; top:0; bottom:0; text-decoration:none; background:#3a4048; }
   .bar u.a { background:#ff5a1f; }
   .v { padding-left:18px; font-family:'DejaVu Sans Mono','SC',monospace; font-size:16px; font-weight:700; white-space:nowrap; }
   .v.o { color:#ff5a1f; }
   .v.g { color:#8b929a; font-weight:400; }
-  .foot { margin-top:auto; font-family:'DejaVu Sans Mono','SC',monospace;
+  .foot { margin-top:22px; font-family:'DejaVu Sans Mono','SC',monospace;
     font-size:11px; line-height:1.7; color:#5b6269; letter-spacing:.01em; }
 </style>
 </head>

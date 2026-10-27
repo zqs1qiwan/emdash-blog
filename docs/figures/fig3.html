@@ -6,14 +6,14 @@
   @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Regular.otf'); font-weight:400; }
   @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Bold.otf'); font-weight:700; }
   * { margin:0; padding:0; box-sizing:border-box; }
-  html,body { width:1200px; height:580px; overflow:hidden; background:#0b0c0e; color:#f2f2f0;
+  html,body { width:1200px; min-height:200px; overflow:visible; background:#0b0c0e; color:#f2f2f0;
     font-family:'SC','DejaVu Sans',sans-serif; -webkit-font-smoothing:antialiased; }
-  .f { position:absolute; inset:0; padding:60px 72px 44px; display:flex; flex-direction:column; }
+  .f { position:relative; min-height:200px; padding:34px 40px 20px; display:flex; flex-direction:column; }
   .meta { display:flex; justify-content:space-between;
     font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; letter-spacing:.14em; color:#5b6269; }
-  h1 { margin-top:34px; font-size:40px; font-weight:700; line-height:1.24; letter-spacing:-.015em; }
+  h1 { margin-top:16px; font-size:43px; font-weight:700; line-height:1.24; letter-spacing:-.015em; }
 
-  .cols { margin-top:56px; display:grid; grid-template-columns:1fr 1fr; }
+  .cols { margin-top:28px; display:grid; grid-template-columns:1fr 1fr; }
   .col { padding-right:56px; }
   .col + .col { padding:0 0 0 56px; border-left:1px solid #23272c; }
   .co { font-family:'DejaVu Sans Mono','SC',monospace; font-size:12px; letter-spacing:.16em; color:#7d848c; }
@@ -25,7 +25,7 @@
   .sub { margin-top:26px; font-size:14px; color:#8b929a; line-height:1.7; }
   .sub b { color:#e6e8ea; font-weight:400; font-family:'DejaVu Sans Mono','SC',monospace; }
 
-  .foot { margin-top:auto; font-family:'DejaVu Sans Mono','SC',monospace;
+  .foot { margin-top:22px; font-family:'DejaVu Sans Mono','SC',monospace;
     font-size:11px; line-height:1.7; color:#5b6269; }
 </style>
 </head>

@@ -8,50 +8,51 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   html,body { width:1200px; height:630px; overflow:hidden; background:#0b0c0e; color:#f2f2f0;
     font-family:'SC','DejaVu Sans',sans-serif; -webkit-font-smoothing:antialiased; }
-  .f { position:absolute; inset:0; padding:60px 72px 46px; display:flex; flex-direction:column; }
-  .meta { display:flex; justify-content:space-between;
+  .meta { position:absolute; left:40px; right:40px; top:34px; display:flex; justify-content:space-between;
     font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; letter-spacing:.14em; color:#5b6269; }
-
-  h1 { margin-top:40px; font-size:46px; font-weight:700; line-height:1.22; letter-spacing:-.02em; }
+  h1 { position:absolute; left:40px; top:66px; width:1020px;
+    font-size:52px; font-weight:700; line-height:1.22; letter-spacing:-.02em; }
   h1 b { color:#ff5a1f; font-weight:700; }
 
-  .nums { margin-top:auto; display:flex; align-items:flex-end; gap:44px; }
-  .side .n { font-family:'DejaVu Sans Mono','SC',monospace; font-size:92px; font-weight:700;
-    line-height:.86; letter-spacing:-.05em; }
-  .side .n u { text-decoration:none; font-size:30px; }
-  .side.r .n { color:#ff5a1f; }
-  .side .l { margin-top:14px; font-size:14px; color:#8b929a; }
-  .mid { padding-bottom:16px; font-family:'DejaVu Sans Mono','SC',monospace;
-    font-size:26px; font-weight:700; color:#f2f2f0; }
-  .mid span { display:block; margin-top:6px; font-size:11px; font-weight:400; color:#5b6269; letter-spacing:.06em; }
+  .nums { position:absolute; left:40px; right:40px; top:262px; height:190px; }
+  .nums .line { position:absolute; left:250px; width:180px; top:88px; height:1px; background:#3a4048; }
+  .big { position:absolute; bottom:34px; font-family:'DejaVu Sans Mono','SC',monospace;
+    font-size:140px; font-weight:700; line-height:.82; letter-spacing:-.05em; }
+  .big u { text-decoration:none; font-size:36px; letter-spacing:0; }
+  .b1 { left:0; }
+  .b2 { left:430px; color:#ff5a1f; }
+  .mult { position:absolute; left:268px; top:54px; padding:0 16px; background:#0b0c0e;
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:64px; font-weight:700;
+    line-height:1; letter-spacing:-.03em; }
+  .cap { position:absolute; font-size:14px; color:#8b929a; }
+  .c1 { left:6px; bottom:0; }
+  .c2 { left:436px; bottom:0; }
+  .mcap { position:absolute; left:268px; top:126px; padding:0 16px; background:#0b0c0e;
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; color:#5b6269; letter-spacing:.06em; }
 
-  .rule { margin-top:34px; height:1px; background:#23272c; }
-  .line { margin-top:20px; font-size:16px; color:#c9ced3; }
-  .src { margin-top:auto; padding-top:18px; font-family:'DejaVu Sans Mono','SC',monospace;
-    font-size:10.5px; color:#4f565d; letter-spacing:.02em; }
+  .rule { position:absolute; left:40px; right:40px; top:492px; height:1px; background:#23272c; }
+  .concl { position:absolute; left:40px; top:510px; width:1040px; font-size:17px; color:#c9ced3; }
+  .src { position:absolute; left:40px; right:40px; bottom:26px;
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:10.5px; color:#4f565d; }
 </style>
 </head>
 <body>
-<div class="f">
   <div class="meta"><div>2026 · 网络安全并购观察</div><div>blog.laobaitv.net</div></div>
 
   <h1>2026 年最大的几笔并购，<br>没有一笔是为了<b>「AI 安全」</b></h1>
 
   <div class="nums">
-    <div class="side">
-      <div class="n">250<u> 亿</u></div>
-      <div class="l">一笔交易的对价</div>
-    </div>
-    <div class="mid">8.8×<span>年市场规模</span></div>
-    <div class="side r">
-      <div class="n">28.35<u> 亿</u></div>
-      <div class="l">整个科目一年的规模</div>
-    </div>
+    <div class="line"></div>
+    <div class="big b1">250<u> 亿</u></div>
+    <div class="mult">8.8×</div>
+    <div class="big b2">28.35<u> 亿</u></div>
+    <div class="cap c1">一笔交易的对价</div>
+    <div class="cap c2">整个科目一年的规模</div>
+    <div class="mcap">年市场规模</div>
   </div>
 
   <div class="rule"></div>
-  <div class="line">钱流向 AI 撕开的三道口子：身份、遥测、运行时。真正被买的是时间。</div>
+  <div class="concl">钱流向 AI 撕开的三道口子：身份、遥测、运行时。真正被买的是时间。</div>
   <div class="src">口径：左为已完成交易对价（Palo Alto / CyberArk），右为 Gartner 2026 年「保护 AI」市场规模预测，性质不同，仅作量级对照</div>
-</div>
 </body>
 </html>

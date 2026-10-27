@@ -6,31 +6,31 @@
   @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Regular.otf'); font-weight:400; }
   @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Bold.otf'); font-weight:700; }
   * { margin:0; padding:0; box-sizing:border-box; }
-  html,body { width:1200px; height:600px; overflow:hidden; background:#0b0c0e; color:#f2f2f0;
+  html,body { width:1200px; min-height:200px; overflow:visible; background:#0b0c0e; color:#f2f2f0;
     font-family:'SC','DejaVu Sans',sans-serif; -webkit-font-smoothing:antialiased; }
-  .f { position:absolute; inset:0; padding:60px 72px 44px; display:flex; flex-direction:column; }
+  .f { position:relative; min-height:200px; padding:34px 40px 20px; display:flex; flex-direction:column; }
   .meta { display:flex; justify-content:space-between;
     font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; letter-spacing:.14em; color:#5b6269; }
-  h1 { margin-top:34px; font-size:40px; font-weight:700; line-height:1.24; letter-spacing:-.015em; }
+  h1 { margin-top:16px; font-size:43px; font-weight:700; line-height:1.24; letter-spacing:-.015em; }
   h1 b { color:#ff5a1f; font-weight:700; }
 
-  .plot { margin-top:54px; position:relative; height:190px; }
-  .zero { position:absolute; left:300px; top:26px; bottom:0; width:1px; background:#4a5058; }
-  .zl { position:absolute; left:300px; top:0; transform:translateX(-50%);
-    font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; color:#5b6269; }
-  .bar { position:absolute; height:56px; top:70px; }
-  .bar.p { left:300px; width:205px; background:#5d646c; }
-  .bar.n { left:232px; width:68px; background:#ff5a1f; }
-  .num { position:absolute; top:50%; transform:translateY(-50%);
-    font-family:'DejaVu Sans Mono','SC',monospace; font-size:26px; font-weight:700; white-space:nowrap; }
-  .lbl { position:absolute; font-size:14px; color:#8b929a; white-space:nowrap; }
-  .dim { position:absolute; top:40px; left:232px; width:273px; height:1px; background:#ff5a1f; }
+  .plot { margin-top:28px; position:relative; height:170px; }
+  .dim { position:absolute; top:0; left:40px; width:1080px; height:1px; background:#ff5a1f; }
   .dim::before, .dim::after { content:''; position:absolute; top:-5px; width:1px; height:11px; background:#ff5a1f; }
   .dim::before { left:0; } .dim::after { right:0; }
-  .diml { position:absolute; top:8px; left:232px; width:273px; text-align:center;
+  .diml { position:absolute; top:14px; left:40px; width:1080px; text-align:center;
     font-family:'DejaVu Sans Mono','SC',monospace; font-size:14px; color:#ff5a1f; }
+  .zero { position:absolute; left:308px; top:0; bottom:38px; width:1px; background:#4a5058; }
+  .zl { position:absolute; left:308px; top:0; transform:translateX(-50%) translateY(-100%);
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; color:#5b6269; }
+  .bar { position:absolute; height:76px; top:52px; }
+  .bar.n { left:40px; width:268px; background:#ff5a1f; }
+  .bar.p { left:308px; width:810px; background:#5d646c; }
+  .num { position:absolute; top:50%; transform:translateY(-50%);
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:30px; font-weight:700; color:#fff; }
+  .lbl { position:absolute; top:138px; font-size:14px; color:#8b929a; white-space:nowrap; }
 
-  .foot { margin-top:auto; font-family:'DejaVu Sans Mono','SC',monospace;
+  .foot { margin-top:22px; font-family:'DejaVu Sans Mono','SC',monospace;
     font-size:11px; line-height:1.7; color:#5b6269; }
 </style>
 </head>
@@ -41,19 +41,16 @@
   <h1>同一份财报，两个净利润<br>中间差了 <b>11.35 亿</b></h1>
 
   <div class="plot">
+    <div class="dim"></div>
+    <div class="diml">11.35 亿 · 收购摊销与整合成本</div>
     <div class="zl">0</div>
     <div class="zero"></div>
 
-    <div class="dim"></div>
-    <div class="diml">11.35 亿 · 收购摊销与整合成本</div>
+    <div class="bar n"><span class="num" style="left:16px">−2.82</span></div>
+    <div class="lbl" style="left:40px">GAAP 净亏损</div>
 
-    <div class="bar n"></div>
-    <div class="num" style="right:calc(100% - 218px); color:#ff5a1f">−2.82</div>
-    <div class="lbl" style="right:calc(100% - 218px); top:136px">GAAP 净亏损</div>
-
-    <div class="bar p"></div>
-    <div class="num" style="left:522px">+8.53</div>
-    <div class="lbl" style="left:522px; top:136px">non-GAAP 净利润</div>
+    <div class="bar p"><span class="num" style="right:18px">+8.53</span></div>
+    <div class="lbl" style="left:308px">non-GAAP 净利润</div>
   </div>
 
   <div class="foot">

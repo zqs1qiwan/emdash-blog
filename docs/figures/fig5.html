@@ -6,18 +6,18 @@
   @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Regular.otf'); font-weight:400; }
   @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Bold.otf'); font-weight:700; }
   * { margin:0; padding:0; box-sizing:border-box; }
-  html,body { width:1200px; height:560px; overflow:hidden; background:#0b0c0e; color:#f2f2f0;
+  html,body { width:1200px; min-height:200px; overflow:visible; background:#0b0c0e; color:#f2f2f0;
     font-family:'SC','DejaVu Sans',sans-serif; -webkit-font-smoothing:antialiased; }
-  .f { position:absolute; inset:0; padding:60px 72px 44px; display:flex; flex-direction:column; }
+  .f { position:relative; min-height:200px; padding:34px 40px 20px; display:flex; flex-direction:column; }
   .meta { display:flex; justify-content:space-between;
     font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; letter-spacing:.14em; color:#5b6269; }
-  h1 { margin-top:34px; font-size:40px; font-weight:700; line-height:1.24; letter-spacing:-.015em; }
+  h1 { margin-top:16px; font-size:43px; font-weight:700; line-height:1.24; letter-spacing:-.015em; }
   h1 b { color:#ff5a1f; font-weight:700; }
 
   .chart { margin-top:46px; }
-  .row { display:grid; grid-template-columns:210px 1fr 150px; align-items:center; margin-bottom:22px; }
+  .row { display:grid; grid-template-columns:210px 1fr 150px; align-items:center; margin-bottom:14px; }
   .co { font-size:15px; color:#c9ced3; }
-  .co i { display:block; margin-top:4px; font-style:normal;
+  .co i { font-style:normal; margin-left:8px;
     font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; color:#5b6269; }
   .track { position:relative; height:26px; }
   .w { position:absolute; top:0; bottom:0; }
@@ -31,7 +31,7 @@
   .months span { position:absolute; top:8px; transform:translateX(-50%);
     font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; color:#5b6269; }
 
-  .foot { margin-top:auto; font-family:'DejaVu Sans Mono','SC',monospace;
+  .foot { margin-top:22px; font-family:'DejaVu Sans Mono','SC',monospace;
     font-size:11px; line-height:1.7; color:#5b6269; }
   .lg { display:flex; gap:28px; margin-bottom:10px; }
   .lg i { display:inline-block; width:22px; height:3px; margin-right:8px; vertical-align:3px; font-style:normal; }
@@ -45,22 +45,22 @@
 
   <div class="chart">
     <div class="row">
-      <div class="co">CrowdStrike<i>FY27 Q2</i></div>
+      <div class="co">CrowdStrike <i>· FY27 Q2</i></div>
       <div class="track"><div class="w o" style="left:33.33%; width:25%"><em></em></div></div>
       <div class="rng">5 月 — 7 月</div>
     </div>
     <div class="row">
-      <div class="co">Palo Alto · Zscaler<i>FY26 Q4</i></div>
+      <div class="co">Palo Alto + Zscaler <i>· FY26 Q4</i></div>
       <div class="track"><div class="w o" style="left:33.33%; width:25%"><em></em></div></div>
       <div class="rng">5 月 — 7 月</div>
     </div>
     <div class="row">
-      <div class="co">Microsoft<i>FY26 Q4</i></div>
+      <div class="co">Microsoft <i>· FY26 Q4</i></div>
       <div class="track"><div class="w g" style="left:25%; width:25%"><em></em></div></div>
       <div class="rng">4 月 — 6 月</div>
     </div>
     <div class="row" style="margin-bottom:0">
-      <div class="co">Cloudflare · Fortinet<i>2026 Q2</i></div>
+      <div class="co">Cloudflare + Fortinet <i>· 2026 Q2</i></div>
       <div class="track"><div class="w g" style="left:25%; width:25%"><em></em></div></div>
       <div class="rng">4 月 — 6 月</div>
     </div>
