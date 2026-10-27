@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Regular.otf'); font-weight:400; }
+  @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Bold.otf'); font-weight:700; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1200px; height:560px; overflow:hidden; background:#0b0c0e; color:#f2f2f0;
+    font-family:'SC','DejaVu Sans',sans-serif; -webkit-font-smoothing:antialiased; }
+  .f { position:absolute; inset:0; padding:60px 72px 44px; display:flex; flex-direction:column; }
+  .meta { display:flex; justify-content:space-between;
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; letter-spacing:.14em; color:#5b6269; }
+  h1 { margin-top:34px; font-size:40px; font-weight:700; line-height:1.24; letter-spacing:-.015em; }
+  h1 b { color:#ff5a1f; font-weight:700; }
+
+  .chart { margin-top:46px; }
+  .row { display:grid; grid-template-columns:210px 1fr 150px; align-items:center; margin-bottom:22px; }
+  .co { font-size:15px; color:#c9ced3; }
+  .co i { display:block; margin-top:4px; font-style:normal;
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; color:#5b6269; }
+  .track { position:relative; height:26px; }
+  .w { position:absolute; top:0; bottom:0; }
+  .w.o { background:#ff5a1f; }
+  .w.g { background:#4a5058; }
+  .w em { position:absolute; right:-14px; top:-8px; bottom:-8px; width:1px; background:#f2f2f0; font-style:normal; }
+  .rng { font-family:'DejaVu Sans Mono','SC',monospace; font-size:13px; color:#8b929a; text-align:right; }
+
+  .ruler { margin-top:10px; display:grid; grid-template-columns:210px 1fr 150px; }
+  .months { grid-column:2; position:relative; height:20px; border-top:1px solid #23272c; }
+  .months span { position:absolute; top:8px; transform:translateX(-50%);
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; color:#5b6269; }
+
+  .foot { margin-top:auto; font-family:'DejaVu Sans Mono','SC',monospace;
+    font-size:11px; line-height:1.7; color:#5b6269; }
+  .lg { display:flex; gap:28px; margin-bottom:10px; }
+  .lg i { display:inline-block; width:22px; height:3px; margin-right:8px; vertical-align:3px; font-style:normal; }
+</style>
+</head>
+<body>
+<div class="f">
+  <div class="meta"><div>2026 · 财报口径</div><div>图 5</div></div>
+
+  <h1>同叫「最新一季」，<br>覆盖的日历窗口差了一个月</h1>
+
+  <div class="chart">
+    <div class="row">
+      <div class="co">CrowdStrike<i>FY27 Q2</i></div>
+      <div class="track"><div class="w o" style="left:33.33%; width:25%"><em></em></div></div>
+      <div class="rng">5 月 — 7 月</div>
+    </div>
+    <div class="row">
+      <div class="co">Palo Alto · Zscaler<i>FY26 Q4</i></div>
+      <div class="track"><div class="w o" style="left:33.33%; width:25%"><em></em></div></div>
+      <div class="rng">5 月 — 7 月</div>
+    </div>
+    <div class="row">
+      <div class="co">Microsoft<i>FY26 Q4</i></div>
+      <div class="track"><div class="w g" style="left:25%; width:25%"><em></em></div></div>
+      <div class="rng">4 月 — 6 月</div>
+    </div>
+    <div class="row" style="margin-bottom:0">
+      <div class="co">Cloudflare · Fortinet<i>2026 Q2</i></div>
+      <div class="track"><div class="w g" style="left:25%; width:25%"><em></em></div></div>
+      <div class="rng">4 月 — 6 月</div>
+    </div>
+  </div>
+
+  <div class="ruler">
+    <div class="months">
+      <span style="left:0">1月</span>
+      <span style="left:25%">4月</span>
+      <span style="left:50%">7月</span>
+      <span style="left:75%">10月</span>
+      <span style="left:100%">12月</span>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="lg">
+      <div><i style="background:#ff5a1f"></i>5–7 月</div>
+      <div><i style="background:#4a5058"></i>4–6 月</div>
+      <div><i style="background:#f2f2f0; width:1px; height:10px; vertical-align:-1px"></i>财年结束月</div>
+    </div>
+    把这几家的增速、ARR 放进同一张表，等于把不同月份的市场混在一起比。财年终点从 1 月底一直排到 12 月底。
+  </div>
+</div>
+</body>
+</html>

@@ -182,7 +182,7 @@ npx wrangler deploy    # 自动 provisioning KV(SESSION)/Images/Assets/Worker Lo
 
 ### 配图生产（HTML 画图 → 浏览器截图 → R2 → 正文 image block，实测）
 
-每张图一个独立 HTML（1200 宽定宽），用 CDP 截图，再转 webp 上传。源文件与脚本：`/opt/data/research/blog/figs/*.html`、`/opt/data/blog-drafts/{pub_v2_media,rebuild_figs}.py`。
+每张图一个独立 HTML（1200 宽定宽），用 CDP 截图，再转 webp 上传。**图源入库在 `docs/figures/`**（v3 版：cover/fig1–fig5），脚本在 `/opt/data/blog-drafts/{publish_v3}.py`。图表选型、准确性与视觉基线（字号四档、三色、减法清单）见 skill `dataviz-figures`，改图前先读它。
 
 ```python
 cdp("Emulation.setDeviceMetricsOverride", width=1200, height=H, deviceScaleFactor=1.5, mobile=False)

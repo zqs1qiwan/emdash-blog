@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Regular.otf'); font-weight:400; }
+  @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Bold.otf'); font-weight:700; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1200px; height:640px; overflow:hidden; background:#0b0c0e; color:#f2f2f0;
+    font-family:'SC','DejaVu Sans',sans-serif; -webkit-font-smoothing:antialiased; }
+  .f { position:absolute; inset:0; padding:60px 72px 44px; display:flex; flex-direction:column; }
+  .meta { display:flex; justify-content:space-between;
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; letter-spacing:.14em; color:#5b6269; }
+  h1 { margin-top:34px; font-size:40px; font-weight:700; line-height:1.24; letter-spacing:-.015em; max-width:920px; }
+  h1 b { color:#ff5a1f; font-weight:700; }
+  .chart { margin-top:54px; }
+  .row { display:grid; grid-template-columns:190px 1fr 214px; align-items:center; margin-bottom:30px; }
+  .k { font-size:15px; color:#c9ced3; }
+  .k i { display:block; margin-top:5px; font-style:normal;
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; color:#5b6269; letter-spacing:.02em; }
+  .bar { position:relative; height:18px; }
+  .bar u { position:absolute; left:0; top:0; bottom:0; text-decoration:none; background:#3a4048; }
+  .bar u.a { background:#ff5a1f; }
+  .v { padding-left:18px; font-family:'DejaVu Sans Mono','SC',monospace; font-size:16px; font-weight:700; white-space:nowrap; }
+  .v.o { color:#ff5a1f; }
+  .v.g { color:#8b929a; font-weight:400; }
+  .foot { margin-top:auto; font-family:'DejaVu Sans Mono','SC',monospace;
+    font-size:11px; line-height:1.7; color:#5b6269; letter-spacing:.01em; }
+</style>
+</head>
+<body>
+<div class="f">
+  <div class="meta"><div>2026 · 网络安全支出结构</div><div>图 1</div></div>
+
+  <h1>被挂在嘴边一年的「AI 安全」，<br>实际只占整个市场的 <b>1.2%</b></h1>
+
+  <div class="chart">
+    <div class="row">
+      <div class="k">信息安全总支出<i>Gartner · 2026 全年预测</i></div>
+      <div class="bar"><u style="width:100%"></u></div>
+      <div class="v g">2440 亿美元</div>
+    </div>
+    <div class="row">
+      <div class="k">其中「保护 AI」<i>Gartner · 2026 全年预测</i></div>
+      <div class="bar"><u class="a" style="width:8px"></u></div>
+      <div class="v o">28.35 亿 · 1.16%</div>
+    </div>
+    <div class="row" style="margin-bottom:0">
+      <div class="k">对照：一笔交易<i>Palo Alto 收购 CyberArk</i></div>
+      <div class="bar"><u style="width:66px"></u></div>
+      <div class="v">250 亿 · 10.2%</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    同一张尺子上，一笔已完成交易的对价，是整个「保护 AI」科目一年规模的 8.8 倍。<br>
+    前两条为年度市场规模预测，第三条为交易对价，性质不同，相加没有意义，此处只标量级。
+  </div>
+</div>
+</body>
+</html>

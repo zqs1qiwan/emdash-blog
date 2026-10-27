@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Regular.otf'); font-weight:400; }
+  @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Bold.otf'); font-weight:700; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1200px; height:600px; overflow:hidden; background:#0b0c0e; color:#f2f2f0;
+    font-family:'SC','DejaVu Sans',sans-serif; -webkit-font-smoothing:antialiased; }
+  .f { position:absolute; inset:0; padding:60px 72px 44px; display:flex; flex-direction:column; }
+  .meta { display:flex; justify-content:space-between;
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; letter-spacing:.14em; color:#5b6269; }
+  h1 { margin-top:34px; font-size:40px; font-weight:700; line-height:1.24; letter-spacing:-.015em; }
+  h1 b { color:#ff5a1f; font-weight:700; }
+
+  .plot { margin-top:54px; position:relative; height:190px; }
+  .zero { position:absolute; left:300px; top:26px; bottom:0; width:1px; background:#4a5058; }
+  .zl { position:absolute; left:300px; top:0; transform:translateX(-50%);
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; color:#5b6269; }
+  .bar { position:absolute; height:56px; top:70px; }
+  .bar.p { left:300px; width:205px; background:#5d646c; }
+  .bar.n { left:232px; width:68px; background:#ff5a1f; }
+  .num { position:absolute; top:50%; transform:translateY(-50%);
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:26px; font-weight:700; white-space:nowrap; }
+  .lbl { position:absolute; font-size:14px; color:#8b929a; white-space:nowrap; }
+  .dim { position:absolute; top:40px; left:232px; width:273px; height:1px; background:#ff5a1f; }
+  .dim::before, .dim::after { content:''; position:absolute; top:-5px; width:1px; height:11px; background:#ff5a1f; }
+  .dim::before { left:0; } .dim::after { right:0; }
+  .diml { position:absolute; top:8px; left:232px; width:273px; text-align:center;
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:14px; color:#ff5a1f; }
+
+  .foot { margin-top:auto; font-family:'DejaVu Sans Mono','SC',monospace;
+    font-size:11px; line-height:1.7; color:#5b6269; }
+</style>
+</head>
+<body>
+<div class="f">
+  <div class="meta"><div>2026 · 250 亿美元的会计后果</div><div>图 2</div></div>
+
+  <h1>同一份财报，两个净利润<br>中间差了 <b>11.35 亿</b></h1>
+
+  <div class="plot">
+    <div class="zl">0</div>
+    <div class="zero"></div>
+
+    <div class="dim"></div>
+    <div class="diml">11.35 亿 · 收购摊销与整合成本</div>
+
+    <div class="bar n"></div>
+    <div class="num" style="right:calc(100% - 218px); color:#ff5a1f">−2.82</div>
+    <div class="lbl" style="right:calc(100% - 218px); top:136px">GAAP 净亏损</div>
+
+    <div class="bar p"></div>
+    <div class="num" style="left:522px">+8.53</div>
+    <div class="lbl" style="left:522px; top:136px">non-GAAP 净利润</div>
+  </div>
+
+  <div class="foot">
+    Palo Alto Networks，FY26 第四季度，单位：亿美元。差额主要来自 250 亿对价带来的摊销与整合支出。<br>
+    并购的价钱不体现在收购当年，体现在此后每一季的利润表上。
+  </div>
+</div>
+</body>
+</html>

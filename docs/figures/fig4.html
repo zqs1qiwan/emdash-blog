@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Regular.otf'); font-weight:400; }
+  @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Bold.otf'); font-weight:700; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1200px; height:600px; overflow:hidden; background:#0b0c0e; color:#f2f2f0;
+    font-family:'SC','DejaVu Sans',sans-serif; -webkit-font-smoothing:antialiased; }
+  .f { position:absolute; inset:0; padding:60px 72px 44px; display:flex; flex-direction:column; }
+  .meta { display:flex; justify-content:space-between;
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; letter-spacing:.14em; color:#5b6269; }
+  h1 { margin-top:34px; font-size:40px; font-weight:700; line-height:1.24; letter-spacing:-.015em; }
+  h1 b { color:#ff5a1f; font-weight:700; }
+
+  .chart { margin-top:50px; }
+  .row { display:grid; grid-template-columns:212px 1fr 132px; align-items:center; margin-bottom:26px; }
+  .co { font-size:15px; color:#c9ced3; }
+  .co i { display:block; margin-top:4px; font-style:normal;
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; color:#5b6269; }
+  .track { position:relative; height:14px; }
+  .seg { position:absolute; top:0; bottom:0; background:#4a5058; }
+  .seg.o { background:#ff5a1f; }
+  .num { font-family:'DejaVu Sans Mono','SC',monospace; font-size:24px; font-weight:700; text-align:right; }
+  .num.o { color:#ff5a1f; }
+
+  .scale { margin-top:6px; display:grid; grid-template-columns:212px 1fr 132px; }
+  .ticks { grid-column:2; position:relative; height:22px; border-top:1px solid #23272c; }
+  .ticks span { position:absolute; top:7px; transform:translateX(-50%);
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; color:#5b6269; }
+  .ticks span:first-child { transform:none; }
+
+  .foot { margin-top:auto; font-family:'DejaVu Sans Mono','SC',monospace;
+    font-size:11px; line-height:1.7; color:#5b6269; }
+</style>
+</head>
+<body>
+<div class="f">
+  <div class="meta"><div>2026 · 估值倍数</div><div>图 4</div></div>
+
+  <h1>身份资产的定价，<br>是托管服务的 <b>十倍</b></h1>
+
+  <div class="chart">
+    <div class="row">
+      <div class="co">Red Canary<i>托管检测响应</i></div>
+      <div class="track"><div class="seg" style="left:calc(4.8 * 14px); width:6px"></div></div>
+      <div class="num">4.8×</div>
+    </div>
+    <div class="row">
+      <div class="co">Permiso<i>云身份威胁检测</i></div>
+      <div class="track"><div class="seg" style="left:calc(8 * 14px); width:calc(5 * 14px)"></div></div>
+      <div class="num">8–13×</div>
+    </div>
+    <div class="row">
+      <div class="co">Chronosphere<i>可观测性</i></div>
+      <div class="track"><div class="seg" style="left:calc(15 * 14px); width:calc(1.8 * 14px)"></div></div>
+      <div class="num">15–16×</div>
+    </div>
+    <div class="row" style="margin-bottom:0">
+      <div class="co">Oasis<i>非人类身份</i></div>
+      <div class="track"><div class="seg o" style="left:calc(48 * 14px); width:calc(2 * 14px)"></div></div>
+      <div class="num o">约 50×</div>
+    </div>
+  </div>
+
+  <div class="scale">
+    <div class="ticks">
+      <span style="left:0">0×</span>
+      <span style="left:calc(10 * 14px)">10×</span>
+      <span style="left:calc(20 * 14px)">20×</span>
+      <span style="left:calc(30 * 14px)">30×</span>
+      <span style="left:calc(40 * 14px)">40×</span>
+      <span style="left:calc(50 * 14px)">50×</span>
+    </div>
+  </div>
+
+  <div class="foot">
+    对价 ÷ 交易时披露或报道的 ARR。区间表示下限至上限；Oasis 为 10 亿美元对约 2000 万 ARR 的报道值。<br>
+    同一波 AI 叙事下，四条赛道的定价差了十倍——买的不是技术，是时间。
+  </div>
+</div>
+</body>
+</html>

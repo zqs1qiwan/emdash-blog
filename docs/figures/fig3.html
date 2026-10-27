@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Regular.otf'); font-weight:400; }
+  @font-face { font-family:'SC'; src:url('file:///opt/data/fonts/NotoSansCJKsc-Bold.otf'); font-weight:700; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1200px; height:580px; overflow:hidden; background:#0b0c0e; color:#f2f2f0;
+    font-family:'SC','DejaVu Sans',sans-serif; -webkit-font-smoothing:antialiased; }
+  .f { position:absolute; inset:0; padding:60px 72px 44px; display:flex; flex-direction:column; }
+  .meta { display:flex; justify-content:space-between;
+    font-family:'DejaVu Sans Mono','SC',monospace; font-size:11px; letter-spacing:.14em; color:#5b6269; }
+  h1 { margin-top:34px; font-size:40px; font-weight:700; line-height:1.24; letter-spacing:-.015em; }
+
+  .cols { margin-top:56px; display:grid; grid-template-columns:1fr 1fr; }
+  .col { padding-right:56px; }
+  .col + .col { padding:0 0 0 56px; border-left:1px solid #23272c; }
+  .co { font-family:'DejaVu Sans Mono','SC',monospace; font-size:12px; letter-spacing:.16em; color:#7d848c; }
+  .big { margin-top:14px; font-family:'DejaVu Sans Mono','SC',monospace;
+    font-size:86px; font-weight:700; line-height:.9; letter-spacing:-.04em; }
+  .big.o { color:#ff5a1f; }
+  .big u { text-decoration:none; font-size:30px; }
+  .cap { margin-top:12px; font-size:15px; color:#c9ced3; }
+  .sub { margin-top:26px; font-size:14px; color:#8b929a; line-height:1.7; }
+  .sub b { color:#e6e8ea; font-weight:400; font-family:'DejaVu Sans Mono','SC',monospace; }
+
+  .foot { margin-top:auto; font-family:'DejaVu Sans Mono','SC',monospace;
+    font-size:11px; line-height:1.7; color:#5b6269; }
+</style>
+</head>
+<body>
+<div class="f">
+  <div class="meta"><div>2026 · 两种不并购的活法</div><div>图 3</div></div>
+
+  <h1>一个卖硬件，一个卖结算权</h1>
+
+  <div class="cols">
+    <div class="col">
+      <div class="co">FORTINET</div>
+      <div class="big">+41<u>%</u></div>
+      <div class="cap">硬件产品收入增速</div>
+      <div class="sub">季度收入 <b>20.48 亿</b> · 同比 <b>+25.6%</b><br>AI 集群的东西向流量带动换机</div>
+    </div>
+    <div class="col">
+      <div class="co">CLOUDFLARE</div>
+      <div class="big o">+36<u>%</u></div>
+      <div class="cap">季度收入增速 · 六家最快</div>
+      <div class="sub">GAAP 运营亏损 <b>2.06 亿</b> · 占收入 <b>30%</b><br>主动用毛利换基础设施位置</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    两家都没有买 AI 安全公司。一家靠 AI 数据中心的硬件需求，一家赌机器流量会走边缘、结算权比并购值钱。<br>
+    口径：均为 2026 年第二季度（自然年）财报。
+  </div>
+</div>
+</body>
+</html>
