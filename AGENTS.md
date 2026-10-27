@@ -176,7 +176,9 @@ npx wrangler deploy    # 自动 provisioning KV(SESSION)/Images/Assets/Worker Lo
 2. **featured_image 列**：JSON 字符串，结构 `{"id","provider":"local","filename","mimeType","width","height","alt","meta":{"storageKey","caption","blurhash":null,"dominantColor":null}}`。首页卡片、文章 hero、og:image 都读它。
 3. **正文**：HTML → Portable Text（`scripts/html_to_portable_text.py`，2026-10-23 起支持 `<a href>` → block 级 `markDefs` 链接标记）。生成 `INSERT INTO ec_posts (id, slug, status, created_at, updated_at, published_at, version, locale, title, featured_image, content, excerpt) VALUES (...)`：id 用 ULID、status='published'、locale='zh'、时间 `datetime('now')`、version=1。
 4. **执行**：`npx wrangler d1 execute laobaiblog-db --remote --file=x.sql -y`（一次执行会带出 ~16 行派生变更：修订/索引，正常）。
-5. **上线验证（全过才算完）**：`curl -w "%{http_code} %{size_download}" /posts/<slug>` 200 且 >10KB；grep 到全部 h2；grep 无 `PortableText` 错误标记；封面端点 200 image/webp；`/posts` 列表、`/rss.xml`、首页均含 slug。
+5. **`translation_group` 必须设成自身 id**：分类页/标签页的 pivot 查询是 `JOIN ec_posts r ON r.translation_group = content_taxonomies.entry_id`（`loader.ts` 的 buildTaxonomyPivotQuery）。留 NULL 的文章在 `/category/*`、`/tag/*` 里**永远查不到**，且不报错——正文页和 `/posts` 列表都正常，只有归档页缺条目。插入 SQL 里直接写 `translation_group = <本行 id>`。同理 `_emdash_content_bylines.content_id` 存的也是 translation_group，不是 post id。
+6. **table / image block 结构（实测可渲染）**：`table` = `{_type:"table",rows:[{_type:"tableRow",cells:[{_type:"tableCell",content:[span...],markDefs:[],isHeader:true}]}],hasHeaderRow:true}`；`image` = `{_type:"image",asset:{_type:"reference",_ref:<mediaId>,url:"/_emdash/api/media/file/<storageKey>",provider:"local"},alt,width,height}`。渲染器在 `node_modules/emdash/src/components/{Table,Image}.astro`，都走 `normalizePortableTextTable` / `resolveImageMedia` 校验。转换器实现在 `/opt/data/blog-drafts/identity_to_pt.py`（p/h2/h3/ul/ol/strong/em/code/a/blockquote/table/img 全支持）。
+7. **上线验证（全过才算完）**：`curl -w "%{http_code} %{size_download}" /posts/<slug>` 200 且 >10KB；grep 到全部 h2；grep 无 `PortableText` 错误标记；封面端点 200 image/webp；`/posts` 列表、`/rss.xml`、首页均含 slug。
 
 ## 博文写作口径（口吻与结构，硬要求）
 

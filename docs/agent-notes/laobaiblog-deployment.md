@@ -89,13 +89,18 @@ npx wrangler deploy     # ⚠️ push 不会自动部署（CI trigger 分支 mai
 
 英文译文备份：`/opt/data/en-post.md` + `/opt/data/en-post.html`（marked 转的 HTML，后台粘贴备用）。
 
-## 内容状态（2026-10-10）
+## 内容状态（2026-10-27）
 
 | 内容 | slug | locale | 状态 |
 |---|---|---|---|
 | 首篇中文文章「从 WordPress 到 EmDash…」 | `wordpress-to-emdash` | zh | published，id `01M1G1QKT5JMQSKBXR245B8AQ8`；**英文版已删除**（单语言回退） |
 | about 页面 | `about` | zh | published |
 | 行业观察「研究：Birthday Week 2026 全复盘…」 | `cloudflare-birthday-week-2026-reasearch` | zh | published，id `01M4FR96S79GF49Z4DXHSE8Z04`；2026-10-09 发布并三轮改写（slug 从 `auto-router-how-cloudflare-decide` 被用户手动改过），未翻译英文 |
+| AI 安全行业分析（英文） | `ai-security-2026-basic-analyze` | en | published，2026-10-19 |
+| PHP2Shell 复盘 | `php2shell` | zh | published，2026-10-24 |
+| 「黑色星期三」甲骨文 Java 漏洞 | `black-wednesday-2026` | zh | published，2026-10-24 |
+| 50 美元后门 | `50-dollar-backdoor` | zh | published，2026-10-25 |
+| 「身份值 250 亿，AI 安全只值 28 亿」 | `identity-250-ai-security-28` | zh | published，2026-10-27，id `01M5XDXT91Y41CBDQN3PDQ15PW`；118 blocks（2 张 table + 1 张正文图），category `cyber-security` + tag `research` |
 
 **历史存档（双语化时期，2026-09-02～2026-10-10）**：/en/ 路由与英文翻译条目的完整经验（query 层 locale 显式传递、getTranslations 返回结构、en 条目直插 SQL）已浓缩进 `../multilanguage.md` 与 `../upgrade-deploy.md`，回退时的完整移除步骤也在这两个文件里。若将来重新启用双语，从那里开始。
 
