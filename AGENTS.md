@@ -180,6 +180,23 @@ npx wrangler deploy    # 自动 provisioning KV(SESSION)/Images/Assets/Worker Lo
 6. **table / image block 结构（实测可渲染）**：`table` = `{_type:"table",rows:[{_type:"tableRow",cells:[{_type:"tableCell",content:[span...],markDefs:[],isHeader:true}]}],hasHeaderRow:true}`；`image` = `{_type:"image",asset:{_type:"reference",_ref:<mediaId>,url:"/_emdash/api/media/file/<storageKey>",provider:"local"},alt,width,height}`。渲染器在 `node_modules/emdash/src/components/{Table,Image}.astro`，都走 `normalizePortableTextTable` / `resolveImageMedia` 校验。转换器实现在 `/opt/data/blog-drafts/identity_to_pt.py`（p/h2/h3/ul/ol/strong/em/code/a/blockquote/table/img 全支持）。
 7. **上线验证（全过才算完）**：`curl -w "%{http_code} %{size_download}" /posts/<slug>` 200 且 >10KB；grep 到全部 h2；grep 无 `PortableText` 错误标记；封面端点 200 image/webp；`/posts` 列表、`/rss.xml`、首页均含 slug。
 
+### 配图生产（HTML 画图 → 浏览器截图 → R2 → 正文 image block，实测）
+
+每张图一个独立 HTML（1200 宽定宽），用 CDP 截图，再转 webp 上传。源文件与脚本：`/opt/data/research/blog/figs/*.html`、`/opt/data/blog-drafts/{pub_v2_media,rebuild_figs}.py`。
+
+```python
+cdp("Emulation.setDeviceMetricsOverride", width=1200, height=H, deviceScaleFactor=1.5, mobile=False)
+capture_screenshot()          # 1800 宽 PNG
+# → PIL(在 /opt/data/.venv) 缩到 1500 宽、quality=82、method=6 → 33~60KB
+```
+
+- **中文字体必须 @font-face 显式指到本地文件**：`src:url('file:///opt/data/fonts/NotoSansCJKsc-Bold.otf')`。容器系统字体里没有 CJK，纯 `font-family:'DejaVu Sans Mono',monospace` 排中文会整片豆腐块（□□□），而且不报错。等宽字体栈一律写成 `'DejaVu Sans Mono','SC',monospace` 让中文回落到 SC。
+- **数字用等宽、中文用 SC**：同一条字体栈里 mono 优先、SC 兜底，小数点才对得齐。
+- **图内编号 = 文章出现顺序**：图被移动/新增后必须重截（图里写死的「图 N」会和正文顺序错位）。
+- **口径纪律**：不同性质的数字（单笔交易对价 vs 年度市场规模）不要放同一根坐标轴比长度，读者会当成同口径；要么换图型，要么在图内写死倍率并标注两边性质。
+- **正文插入**：image block 插在对应数字所在的 block 之后，`caption` 字段会渲染成 `<figcaption>`（字号小、灰色居中），一张图一句图注，写清口径。`alignment:"wide"`。
+- **换图要成对清理**：旧 media 行 + R2 对象一起删；删前用 `ec_posts.content/featured_image LIKE '%<mediaId>%'` 确认 0 引用。
+
 ## 博文写作口径（口吻与结构，硬要求）
 
 - **口吻是科普研究，不是站点汇报**：读者是普罗大众、兼顾工程师。开头从事件/问题本身讲起，不从“我的站点”讲起；自己的站点只能作为研究样本出现（“笔者维运的一个站点”），**禁止“本站如何如何”的写法**。术语（如 PHP、RCE、webshell）先用一段日常语言讲清，再进技术细节；技术细节单独成节，工程师可跳读。
