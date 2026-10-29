@@ -108,6 +108,7 @@ const publishDate = formatDate(post.data.publishedAt);
 	type="article"
 	publishedTime={post.data.publishedAt?.toISOString() ?? null}
 	modifiedTime={post.data.updatedAt.toISOString()}
+	author={bylines[0]?.byline.displayName ?? null}
 	content={{ collection: "posts", id: post.data.id, slug }}
 >
 	<article class="article">
