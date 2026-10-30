@@ -275,6 +275,133 @@ const publishDate = formatDate(post.data.publishedAt);
 		)
 	}
 
+
+<style is:global>
+	/* 正文配图点击放大 */
+	.article-content .emdash-image img {
+		cursor: zoom-in;
+	}
+	.lb {
+		position: fixed;
+		inset: 0;
+		z-index: 9999;
+		display: none;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 16px;
+		padding: 3vh 3vw;
+		background: rgba(8, 9, 10, 0.94);
+	}
+	.lb.is-open {
+		display: flex;
+	}
+	.lb img {
+		max-width: 94vw;
+		max-height: 82vh;
+		width: auto;
+		height: auto;
+		border-radius: 4px;
+		box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+	}
+	.lb-cap {
+		max-width: 76ch;
+		color: #b9bdc2;
+		font-size: 0.82rem;
+		line-height: 1.55;
+		text-align: center;
+	}
+	.lb-close {
+		position: absolute;
+		top: 16px;
+		right: 18px;
+		width: 40px;
+		height: 40px;
+		border-radius: 999px;
+		border: 1px solid #3a4048;
+		background: rgba(20, 22, 25, 0.7);
+		color: #e6e8ea;
+		font-size: 22px;
+		line-height: 1;
+		cursor: pointer;
+	}
+	.lb-close:hover {
+		border-color: #8a9099;
+		color: #fff;
+	}
+	/* 手机端：按原始像素显示，可左右拖动看细节（1600px 的图缩到 390px 就读不清了） */
+	@media (max-width: 640px) {
+		.lb {
+			align-items: flex-start;
+			justify-content: flex-start;
+			overflow: auto;
+			-webkit-overflow-scrolling: touch;
+			padding: 64px 0 24px;
+		}
+		.lb img {
+			max-width: none;
+			max-height: none;
+			border-radius: 0;
+			box-shadow: none;
+		}
+		.lb-cap {
+			display: none;
+		}
+		.lb-close {
+			position: fixed;
+			top: 12px;
+			right: 12px;
+		}
+	}
+</style>
+
+<script>
+	function initLightbox() {
+		const imgs = document.querySelectorAll(
+			".article-content .emdash-image img"
+		) as NodeListOf<HTMLImageElement>;
+		if (!imgs.length || document.querySelector(".lb")) return;
+
+		const wrap = document.createElement("div");
+		wrap.className = "lb";
+		wrap.innerHTML =
+			'<button class="lb-close" type="button" aria-label="关闭">×</button>' +
+			'<img alt=""><div class="lb-cap"></div>';
+		document.body.appendChild(wrap);
+
+		const big = wrap.querySelector("img") as HTMLImageElement;
+		const cap = wrap.querySelector(".lb-cap") as HTMLElement;
+		const close = () => {
+			wrap.classList.remove("is-open");
+			document.documentElement.style.overflow = "";
+		};
+
+		wrap.addEventListener("click", (e) => {
+			if (e.target !== big) close();
+		});
+		document.addEventListener("keydown", (e) => {
+			if (e.key === "Escape") close();
+		});
+
+		imgs.forEach((img) => {
+			img.addEventListener("click", () => {
+				big.src = img.currentSrc || img.src;
+				big.alt = img.alt || "";
+				const c = img.closest("figure")?.querySelector("figcaption")?.textContent?.trim() || "";
+				cap.textContent = c;
+				cap.style.display = c ? "block" : "none";
+				wrap.classList.add("is-open");
+				document.documentElement.style.overflow = "hidden";
+			});
+		});
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initLightbox);
+	} else {
+		initLightbox();
+	}
+</script>
 	<script>
 		// Build table of contents from h2/h3 headings
 		function buildToc() {

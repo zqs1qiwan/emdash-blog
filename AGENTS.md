@@ -214,6 +214,8 @@ $CHROME --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
 - **别用 agent 的 CDP 截图批量跑**：browser harness 的 `Page.captureScreenshot` 默认 5s 响应超时，第二张起基本必挂。
 - 渲染 3200px 后缩到 1600 宽再转 webp（q88，正文 40–90KB，封面 45–55KB）。
 
+**正文图片点击放大**：`src/pages/posts/[slug].astro` 内置 `.lb` 灯箱（`<style is:global>` + 一段脚本），点击 `.article-content .emdash-image img` 弹出原图并带图注；Esc／点背景／右上角关闭。手机端（≤640px）按原始像素显示、可左右拖动，因为 1600px 的图缩到 390px 读不清。新增图片无需改动，只要走 image block 就自动生效。
+
 **换图流程**：`swap_figs_v4.py <slug> <正文图逗号列表> <封面> [封面 alt] [封面 caption]`——上传新 media → 按顺序替换 image block（保留原 alt/caption）→ 换 featured_image → 清理旧 media（`clean_old_media.py`，先确认 0 引用再删 R2）。
 
 ## 博文写作口径（口吻与结构，硬要求）
