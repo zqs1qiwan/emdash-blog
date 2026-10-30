@@ -186,22 +186,35 @@ npx wrangler deploy    # 自动 provisioning KV(SESSION)/Images/Assets/Worker Lo
    byline 本身要有 `locale='zh'` 的翻译条目（同 translation_group），否则 zh 文章匹配不到。
 8. **上线验证（全过才算完）**：`curl -w "%{http_code} %{size_download}" /posts/<slug>` 200 且 >10KB；grep 到全部 h2；grep 无 `PortableText` 错误标记；封面端点 200 image/webp；`/posts` 列表、`/rss.xml`、首页均含 slug。
 
-### 配图生产（HTML 画图 → 浏览器截图 → R2 → 正文 image block，实测）
+### 配图生产 v4（HTML 画布 → headless Chrome → R2 → 正文 image block，2026-10-30 实测）
 
-每张图一个独立 HTML（1200 宽定宽），用 CDP 截图，再转 webp 上传。**图源入库在 `docs/figures/`**（v3 版：cover/fig1–fig5），脚本在 `/opt/data/blog-drafts/{publish_v3}.py`。图表选型、准确性与视觉基线（字号四档、三色、减法清单）见 skill `dataviz-figures`，改图前先读它。
+图源在 `docs/figures/v4/`（`build.py` + `build2.py` 生成 HTML，`render_all.sh` 渲染，`swap_figs_v4.py` 上传并替换）。旧 v3 的 `docs/figures/*.html` 只作历史参考。
 
-```python
-cdp("Emulation.setDeviceMetricsOverride", width=1200, height=H, deviceScaleFactor=1.5, mobile=False)
-capture_screenshot()          # 1800 宽 PNG
-# → PIL(在 /opt/data/.venv) 缩到 1500 宽、quality=82、method=6 → 33~60KB
+**画布规格（硬约束，写死别改）**
+
+| 用途 | 尺寸 | 原因 |
+|---|---|---|
+| 正文配图 | 1600×1000（16:10） | 首页卡片 `.card-image` 就是 16:10，同比例不裁切 |
+| 封面 | 1600×1200（4:3） | 首页 hero `.featured-image img` 是 4:3 + object-fit:cover |
+
+- **内容必须左右对称铺满**：左右内边距各 100px，图形/表格延伸到右边界。旧版 1600 宽画布内容只画到 1360，右侧空 240px → 首页 4:3 裁掉左右各 12.5%，标题被切、右边一片空，就是「一半看不清一半空白」的成因。
+- **封面安全区**：4:3 会被卡片按 16:10 裁掉上下各 12.5%，标题与数字不要贴边，上下各留 ≥110px。
+- **字号下限**（1600 宽）：正文标签 19–24px、数值 30–44px、标题 54–56px、封面标题 80–84px。低于这个在卡片宽度（约 380px）下不可读。
+
+**渲染（容器内实测）**
+
+```bash
+CHROME=/opt/hermes/tools/chromium-1208/chrome-linux64/chrome
+$CHROME --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
+  --no-first-run --hide-scrollbars --force-device-scale-factor=2 \
+  --window-size=1600,1000 --screenshot=out.png "file:///.../fig.html"
 ```
 
-- **中文字体必须 @font-face 显式指到本地文件**：`src:url('file:///opt/data/fonts/NotoSansCJKsc-Bold.otf')`。容器系统字体里没有 CJK，纯 `font-family:'DejaVu Sans Mono',monospace` 排中文会整片豆腐块（□□□），而且不报错。等宽字体栈一律写成 `'DejaVu Sans Mono','SC',monospace` 让中文回落到 SC。
-- **数字用等宽、中文用 SC**：同一条字体栈里 mono 优先、SC 兜底，小数点才对得齐。
-- **图内编号 = 文章出现顺序**：图被移动/新增后必须重截（图里写死的「图 N」会和正文顺序错位）。
-- **口径纪律**：不同性质的数字（单笔交易对价 vs 年度市场规模）不要放同一根坐标轴比长度，读者会当成同口径；要么换图型，要么在图内写死倍率并标注两边性质。
-- **正文插入**：image block 插在对应数字所在的 block 之后，`caption` 字段会渲染成 `<figcaption>`（字号小、灰色居中），一张图一句图注，写清口径。`alignment:"wide"`。
-- **换图要成对清理**：旧 media 行 + R2 对象一起删；删前用 `ec_posts.content/featured_image LIKE '%<mediaId>%'` 确认 0 引用。
+- **`--disable-dev-shm-usage` 必须加**：容器 `/dev/shm` 只有 64MB，不加会随机挂死（表现为 Chrome 进程堆积、截图永不返回）。
+- **别用 agent 的 CDP 截图批量跑**：browser harness 的 `Page.captureScreenshot` 默认 5s 响应超时，第二张起基本必挂。
+- 渲染 3200px 后缩到 1600 宽再转 webp（q88，正文 40–90KB，封面 45–55KB）。
+
+**换图流程**：`swap_figs_v4.py <slug> <正文图逗号列表> <封面> [封面 alt] [封面 caption]`——上传新 media → 按顺序替换 image block（保留原 alt/caption）→ 换 featured_image → 清理旧 media（`clean_old_media.py`，先确认 0 引用再删 R2）。
 
 ## 博文写作口径（口吻与结构，硬要求）
 
