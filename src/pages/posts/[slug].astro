@@ -358,7 +358,8 @@ const publishDate = formatDate(post.data.publishedAt);
 	.article-hero img {
 		width: 100%;
 		height: auto;
-		max-height: 500px;
+		/* 4:3 封面在正文宽度下约 750px 高，500px 上限会把封面上下裁掉 */
+		max-height: 780px;
 		object-fit: cover;
 	}
 
