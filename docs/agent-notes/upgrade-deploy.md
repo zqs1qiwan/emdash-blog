@@ -73,3 +73,10 @@
 - **路由层**：astro i18n 块控制 `/en/` 前缀与 fallback rewrite
 - **站点标题/tagline** 存 options 表（`site:title`），不 per-locale——所以 /en/ 页面标题还是中文
 - 1.2.0 起多 locale + D1 站点 `entry.id` 恒含 locale 前缀（#3922）；模板里拼链接应改用 `entry.data.slug`。单语言站点无此问题
+
+## 1.3.1 → 1.4.0 实测（2026-11-03）
+
+- `npx upgrade-emdash@latest --dry-run` 显示 3 个包（emdash/@emdash-cms/cloudflare/plugin-forms），`--yes` 一次成功，**0 个新增 core migrations**（比对两个包的 `dist/migrations` 文件列表完全一致）→ **跳过 migrate，直接 build + deploy**
+- upgrade-emdash 会额外写入 `.agents/skills/*`、刷新 `skills-lock.json`（会影响 Amp/Cline/Codex 等 agent 配置目录），提交时一并入库
+- 新增依赖时的坑：`@emdash-cms/plugin-ai-search` 带两个 peer 依赖（`@cloudflare/kumo` 要求精确 `2.6.0`、`@phosphor-icons/react`），不装会在 `astro build` 阶段解析失败
+- **部署阶段被 AI Search binding 卡住的教训**：`ai_search_namespaces` 绑定会让 `wrangler deploy` 用部署 token 去校验命名空间，缺 AI Search 权限时整包部署失败（详见 AGENTS.md 的 AI Search 段）。以后凡是新 binding 涉及部署 token 没覆盖的新产品，先在本地 `wrangler deploy --dry-run` 或干脆走 REST + secret

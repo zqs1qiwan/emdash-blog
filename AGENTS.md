@@ -401,6 +401,8 @@ EmDash 不是 WPML——**没有机器翻译按钮**。翻译文本必须外部�
 - **编辑已发布文章可直接 D1 UPDATE content**（实测 2026-10）：先 `SELECT content ... --json` 拉到 /tmp 落盘 → python 解析 Portable Text 按 span 精确改文本（不动 marks 结构）→ 重新序列化生成 `UPDATE ... WHERE id='...'` → `--file` 执行 → curl 线上验证。**两个坑**：① 生成 SQL 必须用 heredoc 脚本文件，**不要用 shell 双引号内联 `python -c`**——JSON 里的 `\"` 经 shell 二次转义会变成 `\\"` 写进 DB，Portable Text JSON 损坏，页面渲染出 `PortableText [components.type] is missing "undefined"` 且阅读时间掉成 1 min（损坏特征）。SQLite 字符串字面量只转义单引号（`'`→`''`），反斜杠保持原样。② 内容查询走 D1 实时，UPDATE 后无需清缓存即可生效，验证用 `curl` 抽查编辑后句子 + 残留关键词计数 + 阅读时间是否正常
 - **全文格式统一修复**（实测 2026-10）：中文语境引号必须用弯引号（“…”），转换用 **block 级 toggle 扫描**（按出现顺序交替开/闭），不要用“前一字符是否标点”判断——同一 block 内跨 span 的引号会判断错；中英文混排留一个空格（如 `一条 cf 命令`、`以及 Forbes`）；英文术语大小写以官方为准（Agentic Internet、cf CLI、Auto Router）；模型/包名 ID（cloud/auto、gpt-oss-120b）套 code mark 保持等宽；`（ ` 多余空格用 regex `（ +`→`（` 清理。改完 D1 UPDATE 后 curl 验证计数（弯引号数、术语出现次数），注意标题/meta 里的重复计数要排除
 - **整篇 HTML → Portable Text 重建并覆盖**（实测 2026-10）：用户给新版 HTML 时用 **`scripts/html_to_portable_text.py`**（生产验证版，经 3 次真实转换修复）：`python3 scripts/html_to_portable_text.py in.html --slug <slug> --title <t> --excerpt <e> --code-id gpt-oss-120b --out out.sql`，支持 p/h2/h3/blockquote/ul/ol/strong/em/code → block/span，内置全角化、弯引号 toggle、code-id 拆分、残留半角校验与 SQL roundtrip 验证。踩过的坑（脚本已规避，理解原理仍必要）：① 全角化 carry 必须**剥 len(prev_carry) 字符**（用 `[1:]` 会吃掉每块首字符）；② strong 后接 `:英文` 的冒号在**下一个 span** 里，要查前一个 span 的 marks；③ 弯引号用 block 级 toggle 扫描，不要按前一字符判断；④ 验证 SQL 的正则边界用 `SET content = '(.*?)'(?:, title|, excerpt|, updated_at)`（贪心匹配会吃到 excerpt）；⑤ `wrangler d1 execute --file` 执行后**必须 curl 验证线上内容真的变了**（曾出现 SQL 生成成功但忘执行、线上仍是旧版）；⑥ 标题不变时不要动 title 字段
+- **公开文案红线（2026-10-31）**：本博客为**匿名**站点，任何公开内容不得出现雇主身份、职位或可定位信息（不放 LinkedIn、真名、可反查的账号）。免责**只在 About 页写一次**：「本博客只使用公开资料，代表个人观点，不代表任一公司立场。」——**正文不加免责句**（实测会显得冗余且像免责声明刷屏）。About 保留「作者是行业从业人员」+ 联系邮箱，不挂社交主页链接。涉及署名/披露/身份的内容，先问再做；**去标识化要连数据库一起做**（users.name、users.email、_emdash_bylines.slug 都要脱敏，仅改页面文案没用）。
+
 - **write_file 写 `/home/hermes/projects/` 被拒**（HERMES_WRITE_SAFE_ROOT 之外）→ 用 terminal + python heredoc 写文件（同 laobai-project-conventions）；给用户交付的 md/html 产物放 `/opt/data/`（可写）再用 MEDIA 发送
 - **大段 python heredoc / execute_code 可能被安全审批拦截**（无用户在线时超时 BLOCKED）——翻译类/批量替换脚本拆小步执行，或用 write_file 先把脚本/产物落盘（`/opt/data/` 可写），再小命令触发。**含 `$(grep ... /opt/data/.env)` 内联取 token 的复合命令也频繁被拦**，稳定可行的模式是 `bash -c 'set -a; source /opt/data/.env; set +a; npx wrangler deploy ...'`（先 source 再执行，单引号整体包裹）
 - **shell 内联 SQL 参数引号嵌套极限**：`bash -c '...'` 内再写 `--command "SELECT ... WHERE slug = '...' AND a IN ('x','y')"`（双引号包 SQL + 单引号包值）会在 bash 重新解析时炸出 `unexpected EOF` / `syntax error near unexpected token`。**稳定做法：把命令写进 `.sh` 文件（`/opt/data/tmp/`，write_file 可写）再 `bash 文件.sh` 执行**，彻底绕开嵌套转义；单条简单 `WHERE slug = 'x'` 仍可走 bash -c 单引号模式
@@ -492,6 +494,23 @@ EmDash 不是 WPML——**没有机器翻译按钮**。翻译文本必须外部�
 - **完整实操流程（备份→升级→migrate→build→deploy）见 `references/upgrade-deploy.md`**，含三个实测大坑：① `wrangler d1 export` 撞 FTS5 失败→逐表 dump JSON；② `emigrate migrate` 必须 `--d1 <uuid>`（`--db binding`/`--wrangler` 解析全失败）；③ dist/server/wrangler.json 烘焙开源假配置，部署前必须用 Workers settings API 查真实绑定修补，从仓库根 `wrangler deploy`（产物部署，勿用 --config 从源码打包）——**注：2026-10-10 起 wrangler.jsonc 已改为真实配置入库，第③点的假配置问题已根治，见 references/laobaiblog-deployment.md 的部署节奏**
 - 其他升级注意：`plugin:install`/`plugin:activate` hook 首次启动会跑一次（#3785，失败会禁用插件）；未配 `EMDASH_SITE_URL` 时邮件链接改用后台 Site URL 字段（#3744）；`upgrade-emdash` 内部 npm install 会撞 peer 冲突回滚，先手动升 workers-types v4→v5 + `--legacy-legacy-peer-deps` 装好再跑
 - 历史调研文档：`references/emdash-upgrade-0.36-to-1.2.md`（升级前分析）
+
+## 版本升级（1.3.1 → 1.4.0）— ✅ 已完成（2026-11-03）
+
+- **一次跑通**：`npx upgrade-emdash@latest --yes`（无需手工预升 workers-types）。结果 `emdash` / `@emdash-cms/cloudflare` 1.3.1→1.4.0、`plugin-forms` 0.2.11→0.2.12，**0 个新增 core migrations**（tarball `dist/migrations` diff 双包比对确认）→ 无 migrate 步骤，build + deploy 即完成
+- **副作用**：upgrade-emdash 顺带刷新/覆盖 `.agents/skills/*` 与 `skills-lock.json`（项目内 agent 技能包），提交时一并入库；`.emdash/UPGRADE.md` 是工作单，值得留在仓库
+- **本站实际收益**：`getMenu()` 剔除未发布/回收站条目死链（连带子项一起剔除）、byline 查询合并（D1 每页省 2–6 次串行查询）、并发改稿返回 409 不再静默覆盖
+- **已核无效项**：#4243 CF 缓存 304 —— 本站 HTML 响应无 `last-modified`、无 `cache-control`、无 `cf-cache-status`，CF 边缘没缓存 HTML，这条拿不到收益；#4157 只在挂 Cloudflare Access 时才触发
+- **sandboxed RPC 收窄（#4394）已验证**：webhook-notifier 0.2.3 三个 hook 全部 `await` 到底（含重试 + 投递记录落盘），不会因"连接只在本次调用内有效"丢事件
+
+## AI Search 插件（Cloudflare AI Search，实验）
+
+- **装法**：`@emdash-cms/plugin-ai-search@0.1.0`，peer 依赖必须一起装 `@cloudflare/kumo@2.6.0`（精确版本）+ `@phosphor-icons/react`；`astro.config.mjs` → `plugins: [formsPlugin(), aiSearch()]`；`Base.astro` 导航栏渲染 `<AiSearch label="AI 搜索" translations={...} />`（组件自带 ⌘/Ctrl+K 弹窗，中文文案走 `translations`，注意 navigate/select/close 三个 hint 的 key 分别叫 `navigateHint`/`selectHint`/`closeHint`）
+- **⚠️ 必须用 REST 凭据，不要用 Workers binding**：binding 写法（`ai_search_namespaces` → `AI_SEARCH` / `default`）会在 `wrangler deploy` 的校验阶段调 `GET /accounts/{id}/ai-search/namespaces/default`，而部署 token 没有 AI Search 权限 → `Authentication error [code: 10000]`，**整包部署失败**（资产已传、worker 未更新）。改走 REST：Worker secret `EMDASH_AI_SEARCH_ACCOUNT_ID` + `EMDASH_AI_SEARCH_API_TOKEN`（账户级 token，权限 AI Search Write/Run/Read；凭据只存 `/opt/data/secrets/emdash-ai-search.env`，不入库）。将来想切回 binding，得先给部署 token 加 AI Search Read
+- 命名空间 `default` 早于本项目存在，不必新建；AI Search 实例由插件后台向导创建，默认实例名 `emdash`
+- **计费**：AI Search 从 2026-11-01 起计费（ingestion $0.75/1M tokens），所有 Workers 套餐每月 5M tokens 免费额度——本站 8 篇远在额度内。REST 模式每次搜索/索引都吃 token 配额（1200 req / 5min），插件自身限流 30 次/分钟/IP
+- **自检命令**：`curl -s -X POST -H "X-EmDash-Request: 1" -H "Content-Type: application/json" -d '{"messages":[{"role":"user","content":"cf worker"}]}' https://blog.laobaitv.net/_emdash/api/plugins/ai-search/search` —— 索引未建时返回 `{"code":"NOT_CONFIGURED"}` / 503，属正常；路由正确但 body 结构不对会返回 `INVALID_QUERY` / 400
+- 索引需人工在 `/_emdash/admin` → AI Search 向导里选内容来源并点 Build（后台路由 `search:manage` 权限，无法脚本代劳）
 
 ## 关联文件
 

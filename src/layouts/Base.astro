@@ -8,6 +8,7 @@ import {
 } from "emdash/ui";
 import { createPublicPageContext } from "emdash/page";
 import LiveSearch from "emdash/ui/search";
+import { AiSearch } from "@emdash-cms/plugin-ai-search/astro";
 import { Font } from "astro:assets";
 import { resolveBlogSiteIdentity } from "../utils/site-identity";
 import { ui, formatDate as fmtDate } from "../utils/i18n";
@@ -75,6 +76,20 @@ const pageCtx = createPublicPageContext({
 	siteName: siteTitle,
 });
 
+const aiSearchTranslations = {
+	placeholder: "用一句话描述你想找的内容",
+	searchButtonLabel: "搜索",
+	searchInputAriaLabel: "搜索本站内容",
+	modalEmptyStateDescription: "输入问题或关键词，AI 会在全站文章里检索最相关的内容。",
+	modalNoResultsTitle: "没有找到相关内容",
+	modalNoResultsDescription: "换个说法试试，或者用导航栏的即时搜索。",
+	modalResultsCountPlural: "{n} 条结果",
+	groupOther: "其他",
+	navigateHint: "切换",
+	selectHint: "打开",
+	closeHint: "关闭",
+};
+
 // Check if user is logged in (for showing admin link)
 const isLoggedIn = !!Astro.locals.user;
 ---
@@ -115,6 +130,12 @@ const isLoggedIn = !!Astro.locals.user;
 					}
 				</a>
 				<div class="nav-right">
+					<AiSearch
+						label="AI 搜索"
+						placeholder="用一句话描述你想找的内容"
+						translations={aiSearchTranslations}
+						class="site-ai-search"
+					/>
 					<LiveSearch
 						placeholder={ui.searchPlaceholder}
 						class="site-search"
