@@ -24,7 +24,65 @@
   }
 */
 
-:root {
+/*
+ * Theme token overrides (light / dark / system).
+ *
+ * tokens.css defines every color with light-dark(), which
+ * LightningCSS compiles into a media-query-driven var() cascade: the
+ * chosen values are decided by `@media (prefers-color-scheme: dark)` alone,
+ * so the `.light` / `.dark` classes set by the footer switcher could not
+ * change the palette at all (buttons looked alive, tokens never moved).
+ *
+ * The blocks below pin every color token by explicit class or by the OS
+ * media query, so light / dark / system all work. Unlayered rules here
+ * beat the @layer base defaults regardless of media query state, and they
+ * also hold up on browsers without light-dark() support (the tokens.css
+ * plain-light fallback stays light-only if these blocks were removed).
+ *
+ * Keep values in sync with src/styles/tokens.css (light, dark).
+ */
+:root.light {
+	color-scheme: light;
+	--color-bg: #ffffff;
+	--color-bg-subtle: #fafafa;
+	--color-text: #1a1a1a;
+	--color-text-secondary: #525252;
+	--color-muted: #8b8b8b;
+	--color-border: #e5e5e5;
+	--color-border-subtle: #f0f0f0;
+	--color-surface: #f7f7f7;
+	--color-brand: #0066cc;
+	--color-brand-hover: #0052a3;
+}
+
+:root.dark {
+	color-scheme: dark;
+	--color-bg: #0d0d0d;
+	--color-bg-subtle: #141414;
+	--color-text: #ededed;
+	--color-text-secondary: #a0a0a0;
+	--color-muted: #6b6b6b;
+	--color-border: #2a2a2a;
+	--color-border-subtle: #1f1f1f;
+	--color-surface: #181818;
+	--color-brand: #4d9fff;
+	--color-brand-hover: #6eb0ff;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not(.light) {
+		color-scheme: dark;
+		--color-bg: #0d0d0d;
+		--color-bg-subtle: #141414;
+		--color-text: #ededed;
+		--color-text-secondary: #a0a0a0;
+		--color-muted: #6b6b6b;
+		--color-border: #2a2a2a;
+		--color-border-subtle: #1f1f1f;
+		--color-surface: #181818;
+		--color-brand: #4d9fff;
+		--color-brand-hover: #6eb0ff;
+	}
 }
 
 .nav-admin {
