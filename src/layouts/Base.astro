@@ -7,7 +7,6 @@ import {
 	EmDashBodyEnd,
 } from "emdash/ui";
 import { createPublicPageContext } from "emdash/page";
-import LiveSearch from "emdash/ui/search";
 import { AiSearch } from "@emdash-cms/plugin-ai-search/astro";
 import { Font } from "astro:assets";
 import { resolveBlogSiteIdentity } from "../utils/site-identity";
@@ -136,17 +135,6 @@ const isLoggedIn = !!Astro.locals.user;
 						translations={aiSearchTranslations}
 						class="site-ai-search"
 					/>
-					<LiveSearch
-						placeholder={ui.searchPlaceholder}
-						class="site-search"
-						inputClass="site-search-input"
-						resultsClass="site-search-results"
-						resultClass="site-search-result"
-						collections={["posts", "pages"]}
-					>
-						<fragment slot="loading">{ui.searching}</fragment>
-						<fragment slot="no-results">{ui.searchNoResults}</fragment>
-					</LiveSearch>
 					<div class="nav-links">
 						{
 							menu?.items.map((item) => (
