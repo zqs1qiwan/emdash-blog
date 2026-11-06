@@ -503,12 +503,14 @@ EmDash 不是 WPML——**没有机器翻译按钮**。翻译文本必须外部�
 - **已核无效项**：#4243 CF 缓存 304 —— 本站 HTML 响应无 `last-modified`、无 `cache-control`、无 `cf-cache-status`，CF 边缘没缓存 HTML，这条拿不到收益；#4157 只在挂 Cloudflare Access 时才触发
 - **sandboxed RPC 收窄（#4394）已验证**：webhook-notifier 0.2.3 三个 hook 全部 `await` 到底（含重试 + 投递记录落盘），不会因"连接只在本次调用内有效"丢事件
 
-## AI Search 插件（Cloudflare AI Search，实验）
+## AI Search 插件（Cloudflare AI Search，实验）—— binding 模式
 
 - **装法**：`@emdash-cms/plugin-ai-search@0.1.0`，peer 依赖必须一起装 `@cloudflare/kumo@2.6.0`（精确版本）+ `@phosphor-icons/react`；`astro.config.mjs` → `plugins: [formsPlugin(), aiSearch()]`；`Base.astro` 导航栏渲染 `<AiSearch label="AI 搜索" translations={...} />`（组件自带 ⌘/Ctrl+K 弹窗，中文文案走 `translations`，注意 navigate/select/close 三个 hint 的 key 分别叫 `navigateHint`/`selectHint`/`closeHint`）
-- **⚠️ 必须用 REST 凭据，不要用 Workers binding**：binding 写法（`ai_search_namespaces` → `AI_SEARCH` / `default`）会在 `wrangler deploy` 的校验阶段调 `GET /accounts/{id}/ai-search/namespaces/default`，而部署 token 没有 AI Search 权限 → `Authentication error [code: 10000]`，**整包部署失败**（资产已传、worker 未更新）。改走 REST：Worker secret `EMDASH_AI_SEARCH_ACCOUNT_ID` + `EMDASH_AI_SEARCH_API_TOKEN`（账户级 token，权限 AI Search Write/Run/Read；凭据只存 `/opt/data/secrets/emdash-ai-search.env`，不入库）。将来想切回 binding，得先给部署 token 加 AI Search Read
-- 命名空间 `default` 早于本项目存在，不必新建；AI Search 实例由插件后台向导创建，默认实例名 `emdash`
-- **计费**：AI Search 从 2026-11-01 起计费（ingestion $0.75/1M tokens），所有 Workers 套餐每月 5M tokens 免费额度——本站 8 篇远在额度内。REST 模式每次搜索/索引都吃 token 配额（1200 req / 5min），插件自身限流 30 次/分钟/IP
+- **连接方式 = Workers binding（best practice，2026-11-03 切换完成）**：`wrangler.jsonc` 里 `ai_search_namespaces: [{ "binding": "AI_SEARCH", "namespace": "default" }]`，部署后 bindings 列表里能看到 `env.AI_SEARCH (default)  AI Search Namespace`。binding 模式无 REST 配额、不需要 env 凭据、插件按 IP 限流 30 次/分钟；有 binding 时插件会忽略 `EMDASH_AI_SEARCH_*` env
+- **🚨 binding 接入的前提**：`wrangler deploy` 会用部署 token 调 `GET /accounts/{id}/ai-search/namespaces/default` 做校验，**token 无 AI Search 权限时整包部署失败**（`Authentication error [code: 10000]`；资产已传、worker 未更新）。**本仓部署 token `QiuQiu Bot - Full Management` 有自带 API Tokens Write，可以直接调 API 改自身权限**：`PUT /user/tokens/{self_id}`（注意只能 PUT，PATCH 直接 7001；且必须带上全部既有 policies 整包替换，删一条都会丢一条）→ 给账号 policy 追加 `AI Search Read/Run/Write` 三个 permission_group（id：`01aab63d...` / `e5e805d0...` / `384a77ea...`，从 `/user/tokens/permission_groups` 查）。
+- 2026-11-03 的历史：先走过 REST 模式（单独 token + Worker secret），部署时踩了校验失败后绕过——REST 凭据已删；`/opt/data/secrets/emdash-ai-search.env` 的 token 也已 revoke。如果将来要回 REST 模式，自行去 CF 后台建 token。
+- 命名空间 `default` 早于本站存在，不必新建；AI Search 实例由插件后台向导创建，默认实例名 `emdash`
+- **计费**：AI Search 从 2026-11-01 起计费（ingestion $0.75/1M tokens），所有 Workers 套餐每月 5M tokens 免费额度——本站 8 篇远在额度内
 - **自检命令**：`curl -s -X POST -H "X-EmDash-Request: 1" -H "Content-Type: application/json" -d '{"messages":[{"role":"user","content":"cf worker"}]}' https://blog.laobaitv.net/_emdash/api/plugins/ai-search/search` —— 索引未建时返回 `{"code":"NOT_CONFIGURED"}` / 503，属正常；路由正确但 body 结构不对会返回 `INVALID_QUERY` / 400
 - 索引需人工在 `/_emdash/admin` → AI Search 向导里选内容来源并点 Build（后台路由 `search:manage` 权限，无法脚本代劳）
 

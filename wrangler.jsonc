@@ -24,6 +24,12 @@
       "id": "0f672007a2af4b249eaf78bc57b33f3b"
     }
   ],
+  "ai_search_namespaces": [
+    {
+      "binding": "AI_SEARCH",
+      "namespace": "default"
+    }
+  ],
   "worker_loaders": [
     {
       "binding": "LOADER"
