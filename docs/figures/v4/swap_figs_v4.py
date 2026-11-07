@@ -14,7 +14,8 @@ FIGDIR = "/opt/data/news/figures/v4/pub"
 q = lambda s: "'" + str(s).replace("'", "''") + "'"
 
 env = dict(os.environ)
-for line in open("/opt/data/.env"):
+for line in open(os.environ.get("HERMES_PROFILE_ENV",
+                                "/opt/data/profiles/coder/.env")):
     line = line.strip()
     if line and not line.startswith("#") and "=" in line:
         k, v = line.split("=", 1)
@@ -88,7 +89,7 @@ def main(slug, figs, cover, cover_alt, cover_cap):
     print("roundtrip images:", sum(1 for b in back if b["_type"] == "image"),
           "| cover:", json.loads(db.execute("SELECT featured_image FROM ec_posts").fetchone()[0])["width"])
 
-    print(subprocess.run(["bash", "-c", f"set -a; source /opt/data/.env; set +a; cd {REPO} && "
+    print(subprocess.run(["bash", "-c", f"set -a; source ${{HERMES_PROFILE_ENV:-/opt/data/profiles/coder/.env}}; set +a; cd {REPO} && "
                           f"npx wrangler d1 execute {DB} --remote --file={sqlfile} -y"],
                          capture_output=True, text=True, timeout=300).stdout[-300:])
 
