@@ -46,7 +46,10 @@
       "zone_name": "laobaitv.net"
     }
   ],
-  "observability": {
+  "cache": {
+		"enabled": true
+	},
+	"observability": {
     "logs": {
     	"enabled": true,
     	"head_sampling_rate": 1,

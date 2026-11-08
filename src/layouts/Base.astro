@@ -89,8 +89,8 @@ const aiSearchTranslations = {
 	closeHint: "关闭",
 };
 
-// Check if user is logged in (for showing admin link)
-const isLoggedIn = !!Astro.locals.user;
+// Admin link visibility is resolved client-side via /_emdash/api/auth/me so
+// that public HTML stays anonymous and edge-cacheable (Workers Cache).
 ---
 
 <!doctype html>
@@ -145,13 +145,9 @@ const isLoggedIn = !!Astro.locals.user;
 						}
 					</div>
 				</div>
-				{
-					isLoggedIn && (
-						<a href="/_emdash/admin" class="nav-admin">
-							Admin
-						</a>
-					)
-				}
+				<a href="/_emdash/admin" class="nav-admin" id="nav-admin-link" hidden>
+					Admin
+				</a>
 			</nav>
 		</header>
 
@@ -918,6 +914,18 @@ const isLoggedIn = !!Astro.locals.user;
 					}
 				}
 			});
+		</script>
+		<script is:inline>
+			// Show the Admin link only for logged-in users. Server-side rendering
+			// would bake the login state into the HTML and block edge caching.
+			(function () {
+				var link = document.getElementById("nav-admin-link");
+				if (!link) return;
+				fetch("/_emdash/api/auth/me", { credentials: "same-origin" })
+					.then(function (r) { return r.ok ? r.json() : null; })
+					.then(function (d) { if (d && d.success !== false) link.hidden = false; })
+					.catch(function () {});
+			})();
 		</script>
 		<EmDashBodyEnd page={pageCtx} />
 	</body>
